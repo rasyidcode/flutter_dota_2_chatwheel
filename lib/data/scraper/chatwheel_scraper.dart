@@ -6,6 +6,7 @@ import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
+import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
 
 class ChatwheelScraper {
   static const EVENT_CHATWHEEL_URL = 'https://dota2.fandom.com/wiki/Chat_Wheel';
@@ -49,40 +50,18 @@ class ChatwheelScraper {
 
   /// returns a single chatwheel line from a span element
   ChatwheelLine getLine(Element? span) {
+    span.throwError(startsWith: '<span>');
+
     String name = '';
     String url = '';
 
-    if (span != null) {
-      if (span.outerHtml.startsWith('<span>')) {
-      } else {
-        throw ElementIsNotAsExpectedException(); //tested
-      }
-    } else {
-      throw NoElementFoundException(); //tested
-    }
+    final Element? li = span!.parent;
+    li.throwError(startsWith: '<li>');
+    name = li!.text.replaceAll('Link▶️', '').replaceAll('Link', '').trim();
 
-    final Element? li = span.parent;
     final Element? audioSource = span.querySelector('audio > source');
-
-    if (li != null && !li.outerHtml.startsWith('<body>')) {
-      if (li.outerHtml.startsWith('<li>')) {
-        name = li.text.replaceAll('Link▶️', '').replaceAll('Link', '').trim();
-      } else {
-        throw ElementIsNotAsExpectedException(); //tested
-      }
-    } else {
-      throw NoElementFoundException(); //tested
-    }
-
-    if (audioSource != null) {
-      if (audioSource.attributes.containsKey('src')) {
-        url = audioSource.attributes['src'] ?? '';
-      } else {
-        throw NoSuchElementAttributeFoundException(); //tested
-      }
-    } else {
-      throw NoElementFoundException(); //tested
-    }
+    audioSource.throwError(startsWith: '<source');
+    url = audioSource!.attributes['src'] ?? '';
 
     return ChatwheelLine((b) => b
       ..name = name
@@ -94,29 +73,36 @@ class ChatwheelScraper {
     int bpLevel = 0;
     BuiltList<ChatwheelLine> lines = BuiltList<ChatwheelLine>();
 
-    final Element? li = span?.parent;
-    final Element? ul = li?.parent;
-    final Element? tdLines = ul?.parent;
+    if (span != null) {
+      if (span.outerHtml.startsWith('<span>')) {
+      } else {
+        // throw ElementIsNotAsExpectedException();
+      }
+    } else {
+      throw NoElementFoundException();
+    }
+
+    final Element? li = span.parent;
+    if (li == null) throw NoElementFoundException();
+    final Element? ul = li.parent;
+    if (ul == null) throw NoElementFoundException();
+    final Element? tdLines = ul.parent;
     final Element? tdConsoleCommand = tdLines?.parent;
     final Element? tdCheck = tdConsoleCommand?.parent;
 
-    if (li != null) {
-      if (ul != null) {
-        if (tdLines != null) {
-          List<Element> rawLines =
-              tdLines.querySelectorAll('span > audio > source');
-          lines = rawLines.map((rawLine) => getLine(rawLine))
-              as BuiltList<ChatwheelLine>;
+    if (ul != null) {
+      if (tdLines != null) {
+        List<Element> rawLines =
+            tdLines.querySelectorAll('span > audio > source');
+        lines = rawLines.map((rawLine) => getLine(rawLine))
+            as BuiltList<ChatwheelLine>;
 
-          if (tdConsoleCommand != null) {
-            if (tdCheck != null) {
-              if (tdCheck.text.length > 4) {
-              } else {
-                packName = 'bp${tdCheck.text.trim()}';
-                bpLevel = int.parse(tdCheck.text.trim());
-              }
+        if (tdConsoleCommand != null) {
+          if (tdCheck != null) {
+            if (tdCheck.text.length > 4) {
             } else {
-              throw NoElementFoundException();
+              packName = 'bp${tdCheck.text.trim()}';
+              bpLevel = int.parse(tdCheck.text.trim());
             }
           } else {
             throw NoElementFoundException();
@@ -146,16 +132,4 @@ class ChatwheelScraper {
     }
     return packs;
   }
-}
-
-class NoSuchElementAttributeFoundException implements Exception {
-  final String message = 'No such attribute found';
-}
-
-class ElementIsNotAsExpectedException implements Exception {
-  final String message = 'Element is not as expected';
-}
-
-class NoElementFoundException implements Exception {
-  final String message = 'No element found';
 }
