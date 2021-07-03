@@ -19,12 +19,19 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
   Iterable<Object?> serialize(Serializers serializers, ChatwheelLine object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
-      'name',
-      serializers.serialize(object.name, specifiedType: const FullType(String)),
+      'line',
+      serializers.serialize(object.line, specifiedType: const FullType(String)),
       'url',
       serializers.serialize(object.url, specifiedType: const FullType(String)),
     ];
-
+    Object? value;
+    value = object.lineTranslate;
+    if (value != null) {
+      result
+        ..add('lineTranslate')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -40,9 +47,13 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
-        case 'name':
-          result.name = serializers.deserialize(value,
+        case 'line':
+          result.line = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'lineTranslate':
+          result.lineTranslate = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'url':
           result.url = serializers.deserialize(value,
@@ -57,15 +68,18 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
 
 class _$ChatwheelLine extends ChatwheelLine {
   @override
-  final String name;
+  final String line;
+  @override
+  final String? lineTranslate;
   @override
   final String url;
 
   factory _$ChatwheelLine([void Function(ChatwheelLineBuilder)? updates]) =>
       (new ChatwheelLineBuilder()..update(updates)).build();
 
-  _$ChatwheelLine._({required this.name, required this.url}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(name, 'ChatwheelLine', 'name');
+  _$ChatwheelLine._({required this.line, this.lineTranslate, required this.url})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(line, 'ChatwheelLine', 'line');
     BuiltValueNullFieldError.checkNotNull(url, 'ChatwheelLine', 'url');
   }
 
@@ -79,18 +93,23 @@ class _$ChatwheelLine extends ChatwheelLine {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ChatwheelLine && name == other.name && url == other.url;
+    return other is ChatwheelLine &&
+        line == other.line &&
+        lineTranslate == other.lineTranslate &&
+        url == other.url;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, name.hashCode), url.hashCode));
+    return $jf(
+        $jc($jc($jc(0, line.hashCode), lineTranslate.hashCode), url.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('ChatwheelLine')
-          ..add('name', name)
+          ..add('line', line)
+          ..add('lineTranslate', lineTranslate)
           ..add('url', url))
         .toString();
   }
@@ -100,9 +119,14 @@ class ChatwheelLineBuilder
     implements Builder<ChatwheelLine, ChatwheelLineBuilder> {
   _$ChatwheelLine? _$v;
 
-  String? _name;
-  String? get name => _$this._name;
-  set name(String? name) => _$this._name = name;
+  String? _line;
+  String? get line => _$this._line;
+  set line(String? line) => _$this._line = line;
+
+  String? _lineTranslate;
+  String? get lineTranslate => _$this._lineTranslate;
+  set lineTranslate(String? lineTranslate) =>
+      _$this._lineTranslate = lineTranslate;
 
   String? _url;
   String? get url => _$this._url;
@@ -113,7 +137,8 @@ class ChatwheelLineBuilder
   ChatwheelLineBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _name = $v.name;
+      _line = $v.line;
+      _lineTranslate = $v.lineTranslate;
       _url = $v.url;
       _$v = null;
     }
@@ -135,8 +160,9 @@ class ChatwheelLineBuilder
   _$ChatwheelLine build() {
     final _$result = _$v ??
         new _$ChatwheelLine._(
-            name: BuiltValueNullFieldError.checkNotNull(
-                name, 'ChatwheelLine', 'name'),
+            line: BuiltValueNullFieldError.checkNotNull(
+                line, 'ChatwheelLine', 'line'),
+            lineTranslate: lineTranslate,
             url: BuiltValueNullFieldError.checkNotNull(
                 url, 'ChatwheelLine', 'url'));
     replace(_$result);

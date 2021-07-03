@@ -10,7 +10,8 @@ part 'chatwheel_line.g.dart';
 
 abstract class ChatwheelLine
     implements Built<ChatwheelLine, ChatwheelLineBuilder> {
-  String get name;
+  String get line;
+  String? get lineTranslate;
   String get url;
 
   ChatwheelLine._();
