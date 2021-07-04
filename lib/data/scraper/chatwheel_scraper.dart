@@ -8,18 +8,21 @@ import 'package:html/parser.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
 
 class ChatwheelScraper {
-  static const EVENT_CHATWHEEL_URL = 'https://dota2.fandom.com/wiki/Chat_Wheel';
-  static const DOTA_PLUS_CHATWHEEL_URL =
-      'https://dota2.fandom.com/wiki/Chat_Wheel/Dota_Plus';
-  static const SUPPORTERS_CLUB_CHATWHEEL_URL =
-      'https://dota2.fandom.com/wiki/Supporters_Club';
-
-  ChatwheelEventResult getEventChatwheels(String responseBody) {
+  ChatwheelEventResult getEvents(String responseBody) {
     final Document documentPage = parse(responseBody);
     final List<Element> rawEventChatwheels = documentPage.querySelectorAll(
         'table.wikitable.sortable > tbody > tr > td > ul > li > span > audio');
-    final BuiltList<ChatwheelEvent> events = rawEventChatwheels
-        .map((event) => getEvent(event)) as BuiltList<ChatwheelEvent>;
+    final BuiltList<ChatwheelEvent> events =
+        rawEventChatwheels.map((event) => getEvent(event)).toBuiltList();
+    return ChatwheelEventResult((b) => b..events.replace(events));
+  }
+
+  ChatwheelEventResult getEvents2(String responseBody) {
+    final Document documentPage = parse(responseBody);
+    final List<Element> rawEventChatwheels = documentPage
+        .querySelectorAll('table.wikitable.sortable.jquery-tablesorter');
+    final BuiltList<ChatwheelEvent?> events =
+        rawEventChatwheels.map((event) => getEvent2(event)).toBuiltList();
     return ChatwheelEventResult((b) => b..events.replace(events));
   }
 
@@ -75,7 +78,6 @@ class ChatwheelScraper {
     ul.throwError(startsWith: '<ul>');
 
     final Element? tdLines = ul!.parent;
-    // print(tdLines?.outerHtml);
     tdLines.throwError(startsWith: '<td align="left"');
 
     List<Element> rawLines =
@@ -86,21 +88,60 @@ class ChatwheelScraper {
     tdConsoleCommand.throwError(startsWith: '<td align="left"');
 
     final Element? tdCheck = tdConsoleCommand!.previousElementSibling;
+    if (tdCheck != null) {
+      tdCheck.throwError(startsWith: '<td');
 
-    tdCheck.throwError(startsWith: '<td');
-    if (tdCheck!.text.trim().length > 4 && tdCheck.text.trim() != 'Unused') {
-      packName = tdCheck.text.trim();
-      final Element? tdBpLevel = tdCheck.previousElementSibling;
-      tdBpLevel.throwError(startsWith: '<td');
-      bpLevel = int.parse(tdBpLevel!.text.trim());
-    } else {
-      packName = 'bp${tdCheck.text.trim()}';
-      if (tdCheck.text.trim() == 'Unused') {
-        bpLevel = 0;
+      if (tdCheck.text.trim().length > 4 && tdCheck.text.trim() != 'Unused') {
+        packName = tdCheck.text.trim();
+        final Element? tdBpLevel = tdCheck.previousElementSibling;
+        tdBpLevel.throwError(startsWith: '<td');
+        bpLevel = int.parse(tdBpLevel!.text.trim());
       } else {
-        bpLevel = int.parse(tdCheck.text.trim());
+        packName = 'bp${tdCheck.text.trim()}';
+        if (tdCheck.text.trim() == 'Unused') {
+          bpLevel = 0;
+        } else {
+          bpLevel = int.parse(tdCheck.text.trim());
+        }
+      }
+    } else {
+      packName = 'other_event';
+      bpLevel = 0;
+    }
+
+    return ChatwheelPack((b) => b
+      ..packName = packName
+      ..bpLevel = bpLevel
+      ..lines.replace(lines));
+  }
+
+  ChatwheelPack getPack2(Element? tr) {
+    tr.throwError(startsWith: '<tr>');
+
+    String packName = '';
+    int bpLevel = 0;
+    BuiltList<ChatwheelLine> lines = BuiltList<ChatwheelLine>();
+
+    if (tr!.children.length == 3) {
+      try {
+        bpLevel = int.parse(tr.children[0].text.trim());
+        packName = 'bp$bpLevel';
+      } on FormatException catch (_) {
+        bpLevel = 0;
+        packName = tr.children[0].text.trim();
+      }
+    } else if (tr.children.length == 4) {
+      try {
+        packName = tr.children[1].text.trim();
+        bpLevel = int.parse(tr.children[0].text.trim());
+      } on FormatException catch (_) {
+        bpLevel = 0;
+        packName = tr.children[1].text.trim();
       }
     }
+
+    List<Element> rawLines = tr.querySelectorAll('td > ul > li > span > audio');
+    lines = rawLines.map((rawLine) => getLine(rawLine)).toBuiltList();
 
     return ChatwheelPack((b) => b
       ..packName = packName
@@ -122,7 +163,7 @@ class ChatwheelScraper {
     ul.throwError(startsWith: '<ul>');
 
     final Element? td = ul!.parent;
-    td.throwError(startsWith: '<td align="left">');
+    td.throwError(startsWith: '<td align="left"');
 
     final Element? tr = td!.parent;
     tr.throwError(startsWith: '<tr>');
@@ -141,13 +182,49 @@ class ChatwheelScraper {
     final Element? p = table!.previousElementSibling;
     p.throwError(startsWith: '<p>');
 
-    final Element? h3 = p!.previousElementSibling;
-    h3.throwError(startsWith: '<h3>');
+    Element? h3 = p!.previousElementSibling;
+    h3.throwError(startsWith: '<h3>', orStartsWith: '<h4>');
+    if (h3!.outerHtml.startsWith('<h4>')) {
+      h3 = h3.previousElementSibling;
+    }
 
     final Element? mwHeadline = h3!.querySelector('span.mw-headline');
     mwHeadline.throwError(startsWith: '<span class="mw-headline"');
 
     final String eventName = mwHeadline!.text;
+
+    return ChatwheelEvent(
+      (b) => b
+        ..eventName = eventName
+        ..packs.replace(packs),
+    );
+  }
+
+  ChatwheelEvent? getEvent2(Element? table) {
+    table.throwError(startsWith: '<table');
+
+    final Element? lastThHeader = table!.querySelectorAll('thead tr th').last;
+    lastThHeader.throwError(startsWith: '<th');
+    if (lastThHeader!.text.trim() == 'Sprays') {
+      return null;
+    }
+
+    String eventName = '';
+    BuiltList<ChatwheelPack> packs = BuiltList<ChatwheelPack>();
+
+    final Element? p = table.previousElementSibling;
+    p.throwError(startsWith: '<p>');
+
+    Element? h3 = p!.previousElementSibling;
+    h3.throwError(startsWith: '<h3>', orStartsWith: '<h4>');
+    if (h3!.outerHtml.startsWith('<h4>')) {
+      h3 = h3.previousElementSibling;
+    }
+    final Element? span = h3!.querySelector('span.mw-headline');
+    eventName = span!.text.toString();
+
+    final List<Element> packsElement = table.querySelectorAll('tbody tr');
+    packs = packsElement.map((pack) => getPack2(pack)).toBuiltList();
 
     return ChatwheelEvent(
       (b) => b

@@ -12,7 +12,7 @@ part 'chatwheel_event_result.g.dart';
 
 abstract class ChatwheelEventResult
     implements Built<ChatwheelEventResult, ChatwheelEventResultBuilder> {
-  BuiltList<ChatwheelEvent> get events;
+  BuiltList<ChatwheelEvent?> get events;
 
   ChatwheelEventResult._();
 

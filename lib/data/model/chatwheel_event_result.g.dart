@@ -27,7 +27,7 @@ class _$ChatwheelEventResultSerializer
       'events',
       serializers.serialize(object.events,
           specifiedType: const FullType(
-              BuiltList, const [const FullType(ChatwheelEvent)])),
+              BuiltList, const [const FullType.nullable(ChatwheelEvent)])),
     ];
 
     return result;
@@ -47,9 +47,9 @@ class _$ChatwheelEventResultSerializer
       switch (key) {
         case 'events':
           result.events.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(
-                      BuiltList, const [const FullType(ChatwheelEvent)]))!
-              as BuiltList<Object?>);
+              specifiedType: const FullType(BuiltList, const [
+                const FullType.nullable(ChatwheelEvent)
+              ]))! as BuiltList<Object?>);
           break;
       }
     }
@@ -60,7 +60,7 @@ class _$ChatwheelEventResultSerializer
 
 class _$ChatwheelEventResult extends ChatwheelEventResult {
   @override
-  final BuiltList<ChatwheelEvent> events;
+  final BuiltList<ChatwheelEvent?> events;
 
   factory _$ChatwheelEventResult(
           [void Function(ChatwheelEventResultBuilder)? updates]) =>
@@ -103,10 +103,10 @@ class ChatwheelEventResultBuilder
     implements Builder<ChatwheelEventResult, ChatwheelEventResultBuilder> {
   _$ChatwheelEventResult? _$v;
 
-  ListBuilder<ChatwheelEvent>? _events;
-  ListBuilder<ChatwheelEvent> get events =>
-      _$this._events ??= new ListBuilder<ChatwheelEvent>();
-  set events(ListBuilder<ChatwheelEvent>? events) => _$this._events = events;
+  ListBuilder<ChatwheelEvent?>? _events;
+  ListBuilder<ChatwheelEvent?> get events =>
+      _$this._events ??= new ListBuilder<ChatwheelEvent?>();
+  set events(ListBuilder<ChatwheelEvent?>? events) => _$this._events = events;
 
   ChatwheelEventResultBuilder();
 

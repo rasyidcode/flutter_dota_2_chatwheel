@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event_result.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart';
 import 'package:flutter_dota_2_chatwheel/data/scraper/chatwheel_scraper.dart';
@@ -135,6 +136,35 @@ void main() {
       expect(packs2.lines, linesMatcher2);
     });
 
+    test('test getPack2()', () {
+      String sampleDocumentString = fixtures('pack_element');
+      String sampleDocumentString2 = fixtures('pack_element2');
+      String sampleDocumentString3 = fixtures('pack_element3');
+      String sampleDocumentString4 = fixtures('pack_element4');
+
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Document sampleDocument2 = parse(sampleDocumentString2);
+      final Document sampleDocument3 = parse(sampleDocumentString3);
+      final Document sampleDocument4 = parse(sampleDocumentString4);
+
+      final Element? tr = sampleDocument.querySelector('tr');
+      final Element? tr2 = sampleDocument2.querySelector('tr');
+      final Element? tr3 = sampleDocument3.querySelector('tr');
+      final Element? tr4 = sampleDocument4.querySelector('tr');
+
+      final packs = chatwheelScraper.getPack2(tr);
+      final packs2 = chatwheelScraper.getPack2(tr2);
+      final packs3 = chatwheelScraper.getPack2(tr3);
+      final packs4 = chatwheelScraper.getPack2(tr4);
+
+      expect(packs, TypeMatcher<ChatwheelPack>());
+      expect(packs2, TypeMatcher<ChatwheelPack>());
+      expect(packs3, TypeMatcher<ChatwheelPack>());
+      expect(packs4, TypeMatcher<ChatwheelPack>());
+
+      print(packs4);
+    });
+
     test('returns List of ChatwheelPack and check it\'s properties', () {
       String sampleDocumentString = fixtures('event_element');
 
@@ -143,6 +173,41 @@ void main() {
           'table.wikitable.sortable > tbody > tr > td > ul > li > span > audio');
       final event = chatwheelScraper.getEvent(span);
       expect(event, TypeMatcher<ChatwheelEvent>());
+    });
+
+    test('test getEvent2', () {
+      String sampleDocumentString = fixtures('event_element');
+      String sampleDocumentString2 = fixtures('event_element2');
+      String sampleDocumentString3 = fixtures('event_element3');
+
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Document sampleDocument2 = parse(sampleDocumentString2);
+      final Document sampleDocument3 = parse(sampleDocumentString3);
+
+      final Element? table = sampleDocument.querySelector('table');
+      final Element? table2 = sampleDocument2.querySelector('table');
+      final Element? table3 = sampleDocument3.querySelector('table');
+
+      final event = chatwheelScraper.getEvent2(table);
+      final event2 = chatwheelScraper.getEvent2(table2);
+      final event3 = chatwheelScraper.getEvent2(table3);
+
+      expect(event, TypeMatcher<ChatwheelEvent>());
+      expect(event2, TypeMatcher<ChatwheelEvent>());
+      expect(event3, null);
+    });
+
+    test('returns ChatwheelEventResult', () {
+      String sampleDocumentString = fixtures('chatwheel_fullpage');
+      final events = chatwheelScraper.getEvents(sampleDocumentString);
+      expect(events, TypeMatcher<ChatwheelEventResult>());
+    });
+
+    test('test getEvent2()', () {
+      String sampleDocumentString = fixtures('chatwheel_fullpage2');
+      final events = chatwheelScraper.getEvents2(sampleDocumentString);
+      expect(events, TypeMatcher<ChatwheelEventResult>());
+      print(events.events.length);
     });
   });
 }
