@@ -6,48 +6,101 @@ import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event_result.dart'
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart';
 import 'package:flutter_dota_2_chatwheel/data/scraper/chatwheel_scraper.dart';
+import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
+import '../../helper/common_helper.dart';
+import '../../constants/scraper/chatwheel_getLine.dart';
+
 void main() {
-  String fixtures(String name) =>
-      File('test/data/fixtures/chatwheel_scraper/$name.html')
-          .readAsStringSync();
   final chatwheelScraper = ChatwheelScraper();
 
-  group('chatwheel_scraper.dart test', () {
-    test('should return ChatwheelLine model and correct values', () {
-      String sampleDocumentString = fixtures('the_correct_span');
-      String sampleDocumentString2 = fixtures('the_correct_span2');
+  group('getLine() test', () {
+    test('should return ChatwheelLine model with lineTranslate null', () {
+      String sampleDocumentString = fixtures('chatwheel_scraper/getLine',
+          'chatwheel_single_element_with_no_translate');
 
       final Document sampleDocument = parse(sampleDocumentString);
-      final Document sampleDocument2 = parse(sampleDocumentString2);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      final lineTestResult = chatwheelScraper.getLine(audio);
 
-      final Element? span = sampleDocument.querySelector('li > span > audio');
-      final Element? span2 = sampleDocument2.querySelector('li > span > audio');
-
-      final line = chatwheelScraper.getLine(span);
-      final line2 = chatwheelScraper.getLine(span2);
-
-      expect(line, TypeMatcher<ChatwheelLine>());
-      expect(line.line, 'Ba-dum tishh');
-      expect(line.lineTranslate, null);
-      expect(line.url,
-          'https://static.wikia.nocookie.net/dota2_gamepedia/images/f/fc/Misc_soundboard_rimshot.mp3/revision/latest?cb=20190922222137');
-
-      expect(line2, TypeMatcher<ChatwheelLine>());
-      expect(line2.line, 'Боже, ты посмотри вокруг, что происходит!');
-      expect(line2.lineTranslate, 'God, look around at what is happening!');
-      expect(line2.url,
-          'https://static.wikia.nocookie.net/dota2_gamepedia/images/6/6a/Misc_soundboard_bozhe_ti_posmotri.mp3/revision/latest?cb=20190922222030');
+      expect(lineTestResult, TypeMatcher<ChatwheelLine>());
+      expect(lineTestResult.line, lineData1.line);
+      expect(lineTestResult.lineTranslate, lineData1.lineTranslate);
+      expect(lineTestResult.url, lineData1.url);
     });
 
+    test('should return ChatwheelLine model with lineTranslate not null', () {
+      String sampleDocumentString = fixtures('chatwheel_scraper/getLine',
+          'chatwheel_single_element_with_translate');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      final lineTestResult = chatwheelScraper.getLine(audio);
+
+      expect(lineTestResult, TypeMatcher<ChatwheelLine>());
+      expect(lineTestResult.line, lineData2.line);
+      expect(lineTestResult.lineTranslate, lineData2.lineTranslate);
+      expect(lineTestResult.url, lineData2.url);
+    });
+
+    test('throw NoElementFoundException with null element passed', () {
+      String sampleDocumentString = fixtures('chatwheel_scraper/getLine',
+          'chatwheel_single_element_with_no_audio');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      expect(() => chatwheelScraper.getLine(audio),
+          throwsA(TypeMatcher<NoElementFoundException>()));
+    });
+
+    test('throw NoElementFoundException with not audio element passed', () {
+      String sampleDocumentString = fixtures('chatwheel_scraper/getLine',
+          'chatwheel_single_element_with_not_audio');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      expect(() => chatwheelScraper.getLine(audio),
+          throwsA(TypeMatcher<NoElementFoundException>()));
+    });
+
+    test('throw NoElementFoundException with no src of audio element passed',
+        () {
+      String sampleDocumentString = fixtures(
+          'chatwheel_scraper/getLine', 'chatwheel_single_element_with_no_src');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      final lineTestResult = chatwheelScraper.getLine(audio);
+
+      expect(lineTestResult, TypeMatcher<ChatwheelLine>());
+      expect(lineTestResult.line, lineData3.line);
+      expect(lineTestResult.lineTranslate, lineData3.lineTranslate);
+      expect(lineTestResult.url, lineData3.url);
+    });
+
+    test('throw NoElementFoundException with no line passed', () {
+      String sampleDocumentString = fixtures(
+          'chatwheel_scraper/getLine', 'chatwheel_single_element_with_no_line');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? audio = sampleDocument.querySelector('li > span > audio');
+      final lineTestResult = chatwheelScraper.getLine(audio);
+
+      expect(lineTestResult, TypeMatcher<ChatwheelLine>());
+      expect(lineTestResult.line, lineData4.line);
+      expect(lineTestResult.lineTranslate, lineData4.lineTranslate);
+      expect(lineTestResult.url, lineData4.url);
+    });
+  });
+
+  group('getPack()', () {
     test('should return ChatwheelPack model and correct values', () {
-      String sampleDocumentString = fixtures('pack_element');
-      String sampleDocumentString2 = fixtures('pack_element2');
-      String sampleDocumentString3 = fixtures('pack_element3');
-      String sampleDocumentString4 = fixtures('pack_element4');
+      String sampleDocumentString =
+          fixtures('chatwheel_scraper', 'pack_element');
+      String sampleDocumentString2 =
+          fixtures('chatwheel_scraper', 'pack_element2');
+      String sampleDocumentString3 =
+          fixtures('chatwheel_scraper', 'pack_element3');
+      String sampleDocumentString4 =
+          fixtures('chatwheel_scraper', 'pack_element4');
 
       final Document sampleDocument = parse(sampleDocumentString);
       final Document sampleDocument2 = parse(sampleDocumentString2);
@@ -71,9 +124,12 @@ void main() {
     });
 
     test('should return either ChatwheelEvent or null value', () {
-      String sampleDocumentString = fixtures('event_element');
-      String sampleDocumentString2 = fixtures('event_element2');
-      String sampleDocumentString3 = fixtures('event_element3');
+      String sampleDocumentString =
+          fixtures('chatwheel_scraper', 'event_element');
+      String sampleDocumentString2 =
+          fixtures('chatwheel_scraper', 'event_element2');
+      String sampleDocumentString3 =
+          fixtures('chatwheel_scraper', 'event_element3');
 
       final Document sampleDocument = parse(sampleDocumentString);
       final Document sampleDocument2 = parse(sampleDocumentString2);
@@ -93,7 +149,7 @@ void main() {
     });
 
     test('should return a ChatwheelEventResult', () {
-      String sampleDocumentString = fixtures('chatwheel_fullpage2');
+      String sampleDocumentString = fixtures('common', 'chatwheel_fullpage');
       final events = chatwheelScraper.getEvents2(sampleDocumentString);
       expect(events, TypeMatcher<ChatwheelEventResult>());
     });

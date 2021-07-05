@@ -26,10 +26,9 @@ class ChatwheelScraper {
     return ChatwheelEventResult((b) => b..events.replace(events));
   }
 
-  /// returns a single chatwheel line from a span element
+  /// returns a single chatwheel line from an audio element
   ChatwheelLine getLine(Element? audio) {
     audio.throwError(startsWith: '<audio');
-
     String lane = '';
     String url = '';
     String? translate;

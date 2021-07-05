@@ -1,7 +1,7 @@
+import 'dart:io';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event_result.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart';
 import 'package:flutter_dota_2_chatwheel/data/scraper/chatwheel_scraper.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,8 +18,10 @@ class ChatwheelDataSource {
   ChatwheelDataSource(this._client, this._scraper);
 
   Future<BuiltList<ChatwheelEvent?>> getChatwheelEvents() async {
-    final chatwheelPageResponse =
-        await _client.get(Uri.parse(EVENT_CHATWHEEL_URL));
+    final chatwheelPageResponse = await _client.get(
+      Uri.parse(EVENT_CHATWHEEL_URL),
+      headers: {HttpHeaders.contentTypeHeader: 'text/html; charset=utf-8'},
+    );
 
     if (chatwheelPageResponse.statusCode == 200) {
       final chatwheelEventResult =
