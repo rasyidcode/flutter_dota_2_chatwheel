@@ -39,7 +39,7 @@ void main() {
       );
 
       String sampleDocumentString = fixtures('common', 'chatwheel_fullpage');
-      final eventsScraper = chatwheelScraper.getEvents2(sampleDocumentString);
+      final eventsScraper = chatwheelScraper.getEvents(sampleDocumentString);
 
       when(_scraper.getEvents2(any)).thenReturn(eventsScraper);
 

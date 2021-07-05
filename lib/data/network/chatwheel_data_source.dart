@@ -25,7 +25,7 @@ class ChatwheelDataSource {
 
     if (chatwheelPageResponse.statusCode == 200) {
       final chatwheelEventResult =
-          _scraper.getEvents2(chatwheelPageResponse.body);
+          _scraper.getEvents(chatwheelPageResponse.body);
 
       if (chatwheelEventResult.events.length == 0) throw EmptyResultException();
 

@@ -91,66 +91,103 @@ void main() {
     });
   });
 
-  group('getPack()', () {
-    test('should return ChatwheelPack model and correct values', () {
-      String sampleDocumentString =
-          fixtures('chatwheel_scraper', 'pack_element');
-      String sampleDocumentString2 =
-          fixtures('chatwheel_scraper', 'pack_element2');
-      String sampleDocumentString3 =
-          fixtures('chatwheel_scraper', 'pack_element3');
-      String sampleDocumentString4 =
-          fixtures('chatwheel_scraper', 'pack_element4');
+  group('getPack() test', () {
+    test('should return ChatwheelPack model with no pack name column', () {
+      String sampleDocumentString = fixtures('chatwheel_scraper/getPack',
+          'chatwheel_pack_with_no_pack_name_column');
 
       final Document sampleDocument = parse(sampleDocumentString);
-      final Document sampleDocument2 = parse(sampleDocumentString2);
-      final Document sampleDocument3 = parse(sampleDocumentString3);
-      final Document sampleDocument4 = parse(sampleDocumentString4);
-
       final Element? tr = sampleDocument.querySelector('tr');
-      final Element? tr2 = sampleDocument2.querySelector('tr');
-      final Element? tr3 = sampleDocument3.querySelector('tr');
-      final Element? tr4 = sampleDocument4.querySelector('tr');
-
-      final packs = chatwheelScraper.getPack2(tr);
-      final packs2 = chatwheelScraper.getPack2(tr2);
-      final packs3 = chatwheelScraper.getPack2(tr3);
-      final packs4 = chatwheelScraper.getPack2(tr4);
+      final packs = chatwheelScraper.getPack(tr);
 
       expect(packs, TypeMatcher<ChatwheelPack>());
-      expect(packs2, TypeMatcher<ChatwheelPack>());
-      expect(packs3, TypeMatcher<ChatwheelPack>());
-      expect(packs4, TypeMatcher<ChatwheelPack>());
+      expect(packs.packName, 'bp26');
+      expect(packs.bpLevel, 26);
+      expect(packs.lines, TypeMatcher<BuiltList<ChatwheelLine>>());
+      expect(packs.lines.length, 6);
     });
 
+    test('should return ChatwheelPack model with pack name column', () {
+      String sampleDocumentString2 =
+          fixtures('chatwheel_scraper', 'pack_element2');
+
+      final Document sampleDocument2 = parse(sampleDocumentString2);
+      final Element? tr = sampleDocument2.querySelector('tr');
+      final packs = chatwheelScraper.getPack(tr);
+
+      expect(packs, TypeMatcher<ChatwheelPack>());
+      expect(packs.packName, 'Sound Pack 1 (2017)');
+      expect(packs.bpLevel, 24);
+      expect(packs.lines, TypeMatcher<ChatwheelLine>());
+      expect(packs.lines.length, 6);
+    });
+
+    test('should return ChatwheelPack model with only 1 audio', () {
+      String sampleDocumentString = fixtures(
+          'chatwheel_scraper/getPack', 'chatwheel_pack_with_only_1_audio.html');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? tr = sampleDocument.querySelector('tr');
+      final packs = chatwheelScraper.getPack(tr);
+
+      expect(packs, TypeMatcher<ChatwheelPack>());
+    });
+
+    test('should return ChatwheelPack model with unused pack name', () {
+      String sampleDocumentString = fixtures(
+          'chatwheel_scraper/getPack', 'chatwheel_pack_with_unused_column');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final Element? tr = sampleDocument.querySelector('tr');
+      final packs = chatwheelScraper.getPack(tr);
+
+      expect(packs, TypeMatcher<ChatwheelPack>());
+    });
+  });
+
+  group('getEvent() test', () {
     test('should return either ChatwheelEvent or null value', () {
       String sampleDocumentString =
           fixtures('chatwheel_scraper', 'event_element');
+
+      final Document sampleDocument = parse(sampleDocumentString);
+
+      final Element? table = sampleDocument.querySelector('table');
+
+      final event = chatwheelScraper.getEvent(table);
+
+      expect(event, TypeMatcher<ChatwheelEvent>());
+    });
+
+    test('should return either ChatwheelEvent or null value', () {
       String sampleDocumentString2 =
           fixtures('chatwheel_scraper', 'event_element2');
+
+      final Document sampleDocument2 = parse(sampleDocumentString2);
+
+      final Element? table2 = sampleDocument2.querySelector('table');
+
+      final event2 = chatwheelScraper.getEvent(table2);
+
+      expect(event2, TypeMatcher<ChatwheelEvent>());
+    });
+
+    test('should return either ChatwheelEvent or null value', () {
       String sampleDocumentString3 =
           fixtures('chatwheel_scraper', 'event_element3');
 
-      final Document sampleDocument = parse(sampleDocumentString);
-      final Document sampleDocument2 = parse(sampleDocumentString2);
       final Document sampleDocument3 = parse(sampleDocumentString3);
 
-      final Element? table = sampleDocument.querySelector('table');
-      final Element? table2 = sampleDocument2.querySelector('table');
       final Element? table3 = sampleDocument3.querySelector('table');
 
-      final event = chatwheelScraper.getEvent2(table);
-      final event2 = chatwheelScraper.getEvent2(table2);
-      final event3 = chatwheelScraper.getEvent2(table3);
+      final event3 = chatwheelScraper.getEvent(table3);
 
-      expect(event, TypeMatcher<ChatwheelEvent>());
-      expect(event2, TypeMatcher<ChatwheelEvent>());
       expect(event3, null);
     });
+  });
 
+  group('getEvents() test', () {
     test('should return a ChatwheelEventResult', () {
       String sampleDocumentString = fixtures('common', 'chatwheel_fullpage');
-      final events = chatwheelScraper.getEvents2(sampleDocumentString);
+      final events = chatwheelScraper.getEvents(sampleDocumentString);
       expect(events, TypeMatcher<ChatwheelEventResult>());
     });
   });
