@@ -1,4 +1,4 @@
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_line.dart';
 
 final lineData1 = ChatwheelLine((b) => b
   ..line = 'Ba-dum tishh'

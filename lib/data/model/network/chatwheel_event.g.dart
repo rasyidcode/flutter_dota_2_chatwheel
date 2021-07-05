@@ -6,61 +6,6 @@ part of chatwheel_event;
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<ChatwheelEvent> _$chatwheelEventSerializer =
-    new _$ChatwheelEventSerializer();
-
-class _$ChatwheelEventSerializer
-    implements StructuredSerializer<ChatwheelEvent> {
-  @override
-  final Iterable<Type> types = const [ChatwheelEvent, _$ChatwheelEvent];
-  @override
-  final String wireName = 'ChatwheelEvent';
-
-  @override
-  Iterable<Object?> serialize(Serializers serializers, ChatwheelEvent object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object?>[
-      'eventName',
-      serializers.serialize(object.eventName,
-          specifiedType: const FullType(String)),
-      'packs',
-      serializers.serialize(object.packs,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(ChatwheelPack)])),
-    ];
-
-    return result;
-  }
-
-  @override
-  ChatwheelEvent deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new ChatwheelEventBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case 'eventName':
-          result.eventName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'packs':
-          result.packs.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(
-                      BuiltList, const [const FullType(ChatwheelPack)]))!
-              as BuiltList<Object?>);
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
 class _$ChatwheelEvent extends ChatwheelEvent {
   @override
   final String eventName;

@@ -6,66 +6,6 @@ part of chatwheel_pack;
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<ChatwheelPack> _$chatwheelPackSerializer =
-    new _$ChatwheelPackSerializer();
-
-class _$ChatwheelPackSerializer implements StructuredSerializer<ChatwheelPack> {
-  @override
-  final Iterable<Type> types = const [ChatwheelPack, _$ChatwheelPack];
-  @override
-  final String wireName = 'ChatwheelPack';
-
-  @override
-  Iterable<Object?> serialize(Serializers serializers, ChatwheelPack object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object?>[
-      'packName',
-      serializers.serialize(object.packName,
-          specifiedType: const FullType(String)),
-      'bpLevel',
-      serializers.serialize(object.bpLevel, specifiedType: const FullType(int)),
-      'lines',
-      serializers.serialize(object.lines,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(ChatwheelLine)])),
-    ];
-
-    return result;
-  }
-
-  @override
-  ChatwheelPack deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new ChatwheelPackBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case 'packName':
-          result.packName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'bpLevel':
-          result.bpLevel = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'lines':
-          result.lines.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(
-                      BuiltList, const [const FullType(ChatwheelLine)]))!
-              as BuiltList<Object?>);
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
 class _$ChatwheelPack extends ChatwheelPack {
   @override
   final String packName;

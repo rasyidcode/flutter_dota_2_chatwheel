@@ -1,8 +1,8 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event_result.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event_result.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_line.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_pack.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';

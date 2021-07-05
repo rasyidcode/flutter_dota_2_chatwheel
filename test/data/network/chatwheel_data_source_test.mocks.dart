@@ -6,10 +6,12 @@ import 'dart:async' as _i8;
 import 'dart:convert' as _i9;
 import 'dart:typed_data' as _i10;
 
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_event_result.dart'
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event_result.dart'
     as _i6;
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_line.dart' as _i4;
-import 'package:flutter_dota_2_chatwheel/data/model/chatwheel_pack.dart' as _i5;
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_line.dart'
+    as _i4;
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_pack.dart'
+    as _i5;
 import 'package:flutter_dota_2_chatwheel/data/scraper/chatwheel_scraper.dart'
     as _i12;
 import 'package:html/dom.dart' as _i13;

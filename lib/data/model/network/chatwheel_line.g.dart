@@ -6,66 +6,6 @@ part of chatwheel_line;
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<ChatwheelLine> _$chatwheelLineSerializer =
-    new _$ChatwheelLineSerializer();
-
-class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
-  @override
-  final Iterable<Type> types = const [ChatwheelLine, _$ChatwheelLine];
-  @override
-  final String wireName = 'ChatwheelLine';
-
-  @override
-  Iterable<Object?> serialize(Serializers serializers, ChatwheelLine object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object?>[
-      'line',
-      serializers.serialize(object.line, specifiedType: const FullType(String)),
-      'url',
-      serializers.serialize(object.url, specifiedType: const FullType(String)),
-    ];
-    Object? value;
-    value = object.lineTranslate;
-    if (value != null) {
-      result
-        ..add('lineTranslate')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    return result;
-  }
-
-  @override
-  ChatwheelLine deserialize(
-      Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new ChatwheelLineBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case 'line':
-          result.line = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'lineTranslate':
-          result.lineTranslate = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'url':
-          result.url = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
 class _$ChatwheelLine extends ChatwheelLine {
   @override
   final String line;
