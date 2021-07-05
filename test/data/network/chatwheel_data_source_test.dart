@@ -32,13 +32,14 @@ void main() {
         headers: anyNamed('headers'),
       )).thenAnswer(
         (_) async => http.Response(
-          fixtures('common', 'chatwheel_fullpage'),
+          fixtures('chatwheel_scraper/getEvents', 'chatwheel_fullpage'),
           200,
           headers: {HttpHeaders.contentTypeHeader: 'text/html; charset=utf-8'},
         ),
       );
 
-      String sampleDocumentString = fixtures('common', 'chatwheel_fullpage');
+      String sampleDocumentString =
+          fixtures('chatwheel_scraper/getEvents', 'chatwheel_fullpage');
       final eventsScraper = chatwheelScraper.getEvents(sampleDocumentString);
 
       when(_scraper.getEvents(any)).thenReturn(eventsScraper);
