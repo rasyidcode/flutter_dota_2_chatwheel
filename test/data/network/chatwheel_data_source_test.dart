@@ -48,5 +48,20 @@ void main() {
 
       expect(events, TypeMatcher<BuiltList<ChatwheelEvent?>>());
     });
+
+    test('must return UnhandledException if not 200 statusCode', () {
+      when(_client.get(
+        Uri.parse(EVENT_CHATWHEEL_URL),
+        headers: anyNamed('headers'),
+      )).thenAnswer(
+        (_) async => http.Response(
+          '',
+          500,
+        ),
+      );
+
+      expect(() => _chatwheelDataSouce.getChatwheelEvents(),
+          throwsA(TypeMatcher<UnhandledException>()));
+    });
   });
 }

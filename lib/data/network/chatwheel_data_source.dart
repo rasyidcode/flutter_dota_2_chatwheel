@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:built_collection/built_collection.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event_result.dart';
 import 'package:flutter_dota_2_chatwheel/data/scraper/chatwheel_scraper.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +16,7 @@ class ChatwheelDataSource {
 
   ChatwheelDataSource(this._client, this._scraper);
 
-  Future<BuiltList<ChatwheelEvent?>> getChatwheelEvents() async {
+  Future<ChatwheelEventResult> getChatwheelEvents() async {
     final chatwheelPageResponse = await _client.get(
       Uri.parse(EVENT_CHATWHEEL_URL),
       headers: {HttpHeaders.contentTypeHeader: 'text/html; charset=utf-8'},
@@ -27,9 +26,7 @@ class ChatwheelDataSource {
       final chatwheelEventResult =
           _scraper.getEvents(chatwheelPageResponse.body);
 
-      if (chatwheelEventResult.events.length == 0) throw EmptyResultException();
-
-      return chatwheelEventResult.events;
+      return chatwheelEventResult;
     } else {
       throw UnhandledException();
     }
@@ -38,8 +35,4 @@ class ChatwheelDataSource {
 
 class UnhandledException implements Exception {
   final String message = 'Something went wrong';
-}
-
-class EmptyResultException implements Exception {
-  final String message = 'No chatwheels found';
 }
