@@ -11,6 +11,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
   String get error;
   BuiltList<ChatwheelEvent?> get events;
 
+  bool get isSuccessful => !isLoading && events.isNotEmpty && error == '';
+
   HomeState._();
 
   factory HomeState([updates(HomeStateBuilder b)]) = _$HomeState;

@@ -115,8 +115,8 @@ class ChatwheelScraper {
   /// returns all events that available on the page
   ChatwheelEventResult getEvents(String responseBody) {
     final Document documentPage = parse(responseBody);
-    final List<Element> rawEventChatwheels = documentPage
-        .querySelectorAll('table.wikitable.sortable.jquery-tablesorter');
+    final List<Element> rawEventChatwheels =
+        documentPage.querySelectorAll('table.wikitable.sortable');
     final BuiltList<ChatwheelEvent?> events =
         rawEventChatwheels.map((event) => getEvent(event)).toBuiltList();
     return ChatwheelEventResult((b) => b..events.replace(events));
