@@ -150,6 +150,19 @@ void main() {
   });
 
   group('getEvent() test', () {
+    test('return ChatwheelEvent', () {
+      String sampleDocumentString = fixtures('', 'full_webpage_chatwheel');
+      final Document sampleDocument = parse(sampleDocumentString);
+      final List<Element> tables =
+          sampleDocument.querySelectorAll('table.wikitable.sortable');
+      final event = chatwheelScraper.getEvent(tables[0]);
+
+      expect(event, TypeMatcher<ChatwheelEvent>());
+      expect(event!.eventName, 'The International 2017');
+      expect(event.packs, TypeMatcher<BuiltList<ChatwheelPack>>());
+      expect(event.packs.length, 8);
+    });
+
     test('should return either ChatwheelEvent with table of 3 columns passed',
         () {
       String sampleDocumentString =
@@ -194,11 +207,10 @@ void main() {
 
   group('getEvents() test', () {
     test('should return a ChatwheelEventResult', () {
-      String sampleDocumentString =
-          fixtures('chatwheel_scraper/getEvents', 'chatwheel_fullpage');
+      String sampleDocumentString = fixtures('', 'full_webpage_chatwheel');
       final events = chatwheelScraper.getEvents(sampleDocumentString);
       expect(events, TypeMatcher<ChatwheelEventResult>());
-      expect(events.events.length, 11);
+      expect(events.events.length, 7);
     });
   });
 }

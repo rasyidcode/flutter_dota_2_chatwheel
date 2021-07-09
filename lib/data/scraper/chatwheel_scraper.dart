@@ -82,7 +82,7 @@ class ChatwheelScraper {
   ChatwheelEvent? getEvent(Element? table) {
     table.throwError(startsWith: '<table');
 
-    final Element? lastThHeader = table!.querySelectorAll('thead tr th').last;
+    final Element? lastThHeader = table!.querySelectorAll('tr th').last;
     lastThHeader.throwError(startsWith: '<th');
     if (lastThHeader!.text.trim() == 'Sprays') {
       return null;
@@ -103,6 +103,7 @@ class ChatwheelScraper {
     eventName = span!.text.toString();
 
     final List<Element> packsElement = table.querySelectorAll('tbody tr');
+    packsElement.removeAt(0);
     packs = packsElement.map((pack) => getPack(pack)).toBuiltList();
 
     return ChatwheelEvent(
@@ -117,6 +118,8 @@ class ChatwheelScraper {
     final Document documentPage = parse(responseBody);
     final List<Element> rawEventChatwheels =
         documentPage.querySelectorAll('table.wikitable.sortable');
+    rawEventChatwheels.removeWhere((event) =>
+        event.querySelectorAll('tbody > tr > th').last.text.trim() == 'Sprays');
     final BuiltList<ChatwheelEvent?> events =
         rawEventChatwheels.map((event) => getEvent(event)).toBuiltList();
     return ChatwheelEventResult((b) => b..events.replace(events));

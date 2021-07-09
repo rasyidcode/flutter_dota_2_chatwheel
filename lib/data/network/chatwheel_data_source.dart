@@ -23,10 +23,8 @@ class ChatwheelDataSource {
     );
 
     if (chatwheelPageResponse.statusCode == 200) {
-      // print(chatwheelPageResponse.body);
       final chatwheelEventResult =
           _scraper.getEvents(chatwheelPageResponse.body);
-      print(chatwheelEventResult);
       return chatwheelEventResult;
     } else {
       throw UnhandledException();
