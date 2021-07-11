@@ -2,12 +2,17 @@
 // in flutter_dota_2_chatwheel/test/data/repository/chatwheel_repository_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
+import 'package:built_collection/src/list.dart' as _i3;
+import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart'
+    as _i7;
 import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event_result.dart'
     as _i2;
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart'
-    as _i3;
+    as _i4;
+import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart'
+    as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: avoid_redundant_argument_values
@@ -19,19 +24,50 @@ import 'package:mockito/mockito.dart' as _i1;
 class _FakeChatwheelEventResult extends _i1.Fake
     implements _i2.ChatwheelEventResult {}
 
+class _FakeBuiltList<E> extends _i1.Fake implements _i3.BuiltList<E> {
+  @override
+  String toString() => super.toString();
+}
+
 /// A class which mocks [ChatwheelDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockChatwheelDataSource extends _i1.Mock
-    implements _i3.ChatwheelDataSource {
+    implements _i4.ChatwheelDataSource {
   MockChatwheelDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.ChatwheelEventResult> getChatwheelEvents() =>
+  _i5.Future<_i2.ChatwheelEventResult> getChatwheelEvents() =>
       (super.noSuchMethod(Invocation.method(#getChatwheelEvents, []),
               returnValue: Future<_i2.ChatwheelEventResult>.value(
                   _FakeChatwheelEventResult()))
-          as _i4.Future<_i2.ChatwheelEventResult>);
+          as _i5.Future<_i2.ChatwheelEventResult>);
+}
+
+/// A class which mocks [ChatwheelLineProvider].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockChatwheelLineProvider extends _i1.Mock
+    implements _i6.ChatwheelLineProvider {
+  MockChatwheelLineProvider() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<List<Object?>?> insertBatch(List<_i7.ChatwheelLine>? lines,
+          {dynamic returnResult = false}) =>
+      (super.noSuchMethod(
+              Invocation.method(
+                  #insertBatch, [lines], {#returnResult: returnResult}),
+              returnValue: Future<List<Object?>?>.value())
+          as _i5.Future<List<Object?>?>);
+  @override
+  _i5.Future<_i3.BuiltList<_i7.ChatwheelLine>> getLines(
+          int? offset, int? limit) =>
+      (super.noSuchMethod(Invocation.method(#getLines, [offset, limit]),
+              returnValue: Future<_i3.BuiltList<_i7.ChatwheelLine>>.value(
+                  _FakeBuiltList<_i7.ChatwheelLine>()))
+          as _i5.Future<_i3.BuiltList<_i7.ChatwheelLine>>);
 }

@@ -1,11 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
+import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
+import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart';
 
 class ChatwheelRepository {
   final ChatwheelDataSource _chatwheelDataSource;
+  final BaseProvider _provider;
 
-  ChatwheelRepository(this._chatwheelDataSource);
+  ChatwheelRepository(this._chatwheelDataSource, this._provider);
 
   // play song from internet
   // return BuiltList<ChatwheelEvent>
@@ -17,13 +21,36 @@ class ChatwheelRepository {
     return chatwheelEvents.events;
   }
 
-  /// download all lines and make sure there wasn't duplicated lines
-  /// store it to device storage
-  /// get path of each downloaded lines
-  /// all lines must be stored in database
-  /// make sure no duplicated lines on database
-  /// load data from database
+  /// load all chatwheel from data source and save it to database
+  /// and then return list of chatwheel_line from database
+  Future<BuiltList<ChatwheelLine>> loadChatwheelLines() async {
+    final chatwheelEvents = await _chatwheelDataSource.getChatwheelEvents();
+    final List<ChatwheelLine> localLines = [];
 
+    if (chatwheelEvents.events.length == 0) throw EmptyResultException();
+
+    chatwheelEvents.events.forEach((event) {
+      event?.packs.forEach((pack) {
+        pack.lines.forEach((line) {
+          final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          final ChatwheelLine localLine = ChatwheelLine((b) => b
+            ..eventName = event.eventName
+            ..packName = pack.packName
+            ..line = line.line
+            ..lineTranslate = line.lineTranslate
+            ..url = line.url
+            ..localPath = ''
+            ..createdAt = currentTime
+            ..updatedAt = currentTime);
+          localLines.add(localLine);
+        });
+      });
+    });
+
+    await (_provider as ChatwheelLineProvider).insertBatch(localLines);
+
+    return await (_provider as ChatwheelLineProvider).getLines(0, 10);
+  }
 }
 
 class EmptyResultException implements Exception {
