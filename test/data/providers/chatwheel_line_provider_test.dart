@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +14,7 @@ void main() {
   setUp(() async {
     _db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
     await _db.execute('''
-      create table chatwheel_lines (
+      create table if not exists chatwheel_lines (
         id integer primary key autoincrement,
         eventName text null,
         packName text null,
@@ -59,17 +60,130 @@ void main() {
           ..localPath = 'test3'
           ..createdAt = 3
           ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
+      ),
+      ChatwheelLine(
+        (b) => b
+          ..eventName = 'test3'
+          ..packName = 'test3'
+          ..line = 'test3'
+          ..lineTranslate = 'test3'
+          ..url = 'test3'
+          ..localPath = 'test3'
+          ..createdAt = 3
+          ..updatedAt = 3,
       )
     ];
   });
 
-  group('insertBatch()', () {
-    test('insert list of ChatwheelLine', () async {
+  group('ChatwheelLineProvider test', () {
+    test('insertBatch()', () async {
       List<Object?>? results =
           await _provider.insertBatch(testDataLines, returnResult: true);
 
       expect(results, TypeMatcher<List<Object?>?>());
-      expect(results?.length, 3);
+      expect(results?.length, 12);
+    });
+
+    test('getLines()', () async {
+      BuiltList<ChatwheelLine> results = await _provider.getLines(10, 2);
+
+      expect(results, TypeMatcher<BuiltList<ChatwheelLine>>());
+      expect(results.length, 2);
+    });
+
+    test('countAllLines()', () async {
+      final result = await _provider.countAllLines();
+      // print(result);
+      expect(result, TypeMatcher<List<Map>>());
+      expect(result[0]['total'], 12);
     });
   });
 }

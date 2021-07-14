@@ -23,33 +23,40 @@ class ChatwheelRepository {
 
   /// load all chatwheel from data source and save it to database
   /// and then return list of chatwheel_line from database
-  Future<BuiltList<ChatwheelLine>> loadChatwheelLines() async {
+  Future<BuiltList<ChatwheelLine>> loadChatwheelLines(
+      {required int start, int perPage = 10}) async {
     final chatwheelEvents = await _chatwheelDataSource.getChatwheelEvents();
     final List<ChatwheelLine> localLines = [];
 
     if (chatwheelEvents.events.length == 0) throw EmptyResultException();
 
-    chatwheelEvents.events.forEach((event) {
-      event?.packs.forEach((pack) {
-        pack.lines.forEach((line) {
-          final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-          final ChatwheelLine localLine = ChatwheelLine((b) => b
-            ..eventName = event.eventName
-            ..packName = pack.packName
-            ..line = line.line
-            ..lineTranslate = line.lineTranslate
-            ..url = line.url
-            ..localPath = ''
-            ..createdAt = currentTime
-            ..updatedAt = currentTime);
-          localLines.add(localLine);
+    final _result = await (_provider as ChatwheelLineProvider).countAllLines();
+    if (_result[0]['total'] == 0) {
+      chatwheelEvents.events.forEach((event) {
+        event?.packs.forEach((pack) {
+          pack.lines.forEach((line) {
+            final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+            final ChatwheelLine localLine = ChatwheelLine((b) => b
+              ..eventName = event.eventName
+              ..packName = pack.packName
+              ..line = line.line
+              ..lineTranslate = line.lineTranslate
+              ..url = line.url
+              ..localPath = ''
+              ..createdAt = currentTime
+              ..updatedAt = currentTime);
+            localLines.add(localLine);
+          });
         });
       });
-    });
 
-    await (_provider as ChatwheelLineProvider).insertBatch(localLines);
+      final filteredLocalLines = localLines.toSet().toList();
 
-    return await (_provider as ChatwheelLineProvider).getLines(0, 10);
+      await (_provider as ChatwheelLineProvider)
+          .insertBatch(filteredLocalLines);
+    }
+
+    return await (_provider as ChatwheelLineProvider).getLines(start, perPage);
   }
 }
 

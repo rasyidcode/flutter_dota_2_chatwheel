@@ -12,17 +12,17 @@ class _$HomeState extends HomeState {
   @override
   final String error;
   @override
-  final BuiltList<ChatwheelEvent?> events;
+  final BuiltList<ChatwheelLine> lines;
 
   factory _$HomeState([void Function(HomeStateBuilder)? updates]) =>
       (new HomeStateBuilder()..update(updates)).build();
 
   _$HomeState._(
-      {required this.isLoading, required this.error, required this.events})
+      {required this.isLoading, required this.error, required this.lines})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(isLoading, 'HomeState', 'isLoading');
     BuiltValueNullFieldError.checkNotNull(error, 'HomeState', 'error');
-    BuiltValueNullFieldError.checkNotNull(events, 'HomeState', 'events');
+    BuiltValueNullFieldError.checkNotNull(lines, 'HomeState', 'lines');
   }
 
   @override
@@ -38,13 +38,13 @@ class _$HomeState extends HomeState {
     return other is HomeState &&
         isLoading == other.isLoading &&
         error == other.error &&
-        events == other.events;
+        lines == other.lines;
   }
 
   @override
   int get hashCode {
     return $jf(
-        $jc($jc($jc(0, isLoading.hashCode), error.hashCode), events.hashCode));
+        $jc($jc($jc(0, isLoading.hashCode), error.hashCode), lines.hashCode));
   }
 
   @override
@@ -52,7 +52,7 @@ class _$HomeState extends HomeState {
     return (newBuiltValueToStringHelper('HomeState')
           ..add('isLoading', isLoading)
           ..add('error', error)
-          ..add('events', events))
+          ..add('lines', lines))
         .toString();
   }
 }
@@ -68,10 +68,10 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
   String? get error => _$this._error;
   set error(String? error) => _$this._error = error;
 
-  ListBuilder<ChatwheelEvent?>? _events;
-  ListBuilder<ChatwheelEvent?> get events =>
-      _$this._events ??= new ListBuilder<ChatwheelEvent?>();
-  set events(ListBuilder<ChatwheelEvent?>? events) => _$this._events = events;
+  ListBuilder<ChatwheelLine>? _lines;
+  ListBuilder<ChatwheelLine> get lines =>
+      _$this._lines ??= new ListBuilder<ChatwheelLine>();
+  set lines(ListBuilder<ChatwheelLine>? lines) => _$this._lines = lines;
 
   HomeStateBuilder();
 
@@ -80,7 +80,7 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
     if ($v != null) {
       _isLoading = $v.isLoading;
       _error = $v.error;
-      _events = $v.events.toBuilder();
+      _lines = $v.lines.toBuilder();
       _$v = null;
     }
     return this;
@@ -107,12 +107,12 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
                   isLoading, 'HomeState', 'isLoading'),
               error: BuiltValueNullFieldError.checkNotNull(
                   error, 'HomeState', 'error'),
-              events: events.build());
+              lines: lines.build());
     } catch (_) {
       late String _$failedField;
       try {
-        _$failedField = 'events';
-        events.build();
+        _$failedField = 'lines';
+        lines.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'HomeState', _$failedField, e.toString());

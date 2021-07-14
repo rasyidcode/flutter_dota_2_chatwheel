@@ -36,4 +36,8 @@ class ChatwheelLineProvider extends BaseProvider {
           ..updatedAt = line['updatedAt']))
         .toBuiltList();
   }
+
+  Future<List<Map<String, Object?>>> countAllLines() async {
+    return await _db.rawQuery('SELECT COUNT(*) as total FROM chatwheel_lines');
+  }
 }

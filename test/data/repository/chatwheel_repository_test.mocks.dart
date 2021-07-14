@@ -70,4 +70,9 @@ class MockChatwheelLineProvider extends _i1.Mock
               returnValue: Future<_i3.BuiltList<_i7.ChatwheelLine>>.value(
                   _FakeBuiltList<_i7.ChatwheelLine>()))
           as _i5.Future<_i3.BuiltList<_i7.ChatwheelLine>>);
+  @override
+  _i5.Future<List<Map<String, Object?>>> countAllLines() => (super.noSuchMethod(
+      Invocation.method(#countAllLines, []),
+      returnValue: Future<List<Map<String, Object?>>>.value(
+          <Map<String, Object?>>[])) as _i5.Future<List<Map<String, Object?>>>);
 }

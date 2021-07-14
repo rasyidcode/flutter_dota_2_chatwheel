@@ -20,8 +20,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield HomeState.loading();
 
       try {
-        final events = await _chatwheelRepository.loadChatwheelEvents();
-        yield HomeState.success(events);
+        // final events = await _chatwheelRepository.loadChatwheelEvents();
+        final lines = await _chatwheelRepository.loadChatwheelLines(start: 0);
+        // yield HomeState.success(lines);
+        yield HomeState.success(lines);
       } on NoElementFoundException catch (e) {
         yield HomeState.failure(e.message);
       } on UnhandledException catch (e) {
