@@ -11,6 +11,7 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
   String get error;
   // BuiltList<ChatwheelEvent?> get events;
   BuiltList<ChatwheelLine> get lines;
+  bool get hasReachedEndOfResults;
 
   bool get isSuccessful => !isLoading && lines.isNotEmpty && error == '';
 
@@ -22,27 +23,31 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
     return HomeState((b) => b
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
-      ..error = '');
+      ..error = ''
+      ..hasReachedEndOfResults = false);
   }
 
   factory HomeState.loading() {
     return HomeState((b) => b
       ..isLoading = true
       ..lines.replace(BuiltList<ChatwheelLine>())
-      ..error = '');
+      ..error = ''
+      ..hasReachedEndOfResults = false);
   }
 
   factory HomeState.failure(String error) {
     return HomeState((b) => b
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
-      ..error = error);
+      ..error = error
+      ..hasReachedEndOfResults = false);
   }
 
   factory HomeState.success(BuiltList<ChatwheelLine> events) {
     return HomeState((b) => b
       ..isLoading = false
       ..lines.replace(events)
-      ..error = '');
+      ..error = ''
+      ..hasReachedEndOfResults = false);
   }
 }

@@ -13,16 +13,23 @@ class _$HomeState extends HomeState {
   final String error;
   @override
   final BuiltList<ChatwheelLine> lines;
+  @override
+  final bool hasReachedEndOfResults;
 
   factory _$HomeState([void Function(HomeStateBuilder)? updates]) =>
       (new HomeStateBuilder()..update(updates)).build();
 
   _$HomeState._(
-      {required this.isLoading, required this.error, required this.lines})
+      {required this.isLoading,
+      required this.error,
+      required this.lines,
+      required this.hasReachedEndOfResults})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(isLoading, 'HomeState', 'isLoading');
     BuiltValueNullFieldError.checkNotNull(error, 'HomeState', 'error');
     BuiltValueNullFieldError.checkNotNull(lines, 'HomeState', 'lines');
+    BuiltValueNullFieldError.checkNotNull(
+        hasReachedEndOfResults, 'HomeState', 'hasReachedEndOfResults');
   }
 
   @override
@@ -38,13 +45,15 @@ class _$HomeState extends HomeState {
     return other is HomeState &&
         isLoading == other.isLoading &&
         error == other.error &&
-        lines == other.lines;
+        lines == other.lines &&
+        hasReachedEndOfResults == other.hasReachedEndOfResults;
   }
 
   @override
   int get hashCode {
-    return $jf(
-        $jc($jc($jc(0, isLoading.hashCode), error.hashCode), lines.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, isLoading.hashCode), error.hashCode), lines.hashCode),
+        hasReachedEndOfResults.hashCode));
   }
 
   @override
@@ -52,7 +61,8 @@ class _$HomeState extends HomeState {
     return (newBuiltValueToStringHelper('HomeState')
           ..add('isLoading', isLoading)
           ..add('error', error)
-          ..add('lines', lines))
+          ..add('lines', lines)
+          ..add('hasReachedEndOfResults', hasReachedEndOfResults))
         .toString();
   }
 }
@@ -73,6 +83,11 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
       _$this._lines ??= new ListBuilder<ChatwheelLine>();
   set lines(ListBuilder<ChatwheelLine>? lines) => _$this._lines = lines;
 
+  bool? _hasReachedEndOfResults;
+  bool? get hasReachedEndOfResults => _$this._hasReachedEndOfResults;
+  set hasReachedEndOfResults(bool? hasReachedEndOfResults) =>
+      _$this._hasReachedEndOfResults = hasReachedEndOfResults;
+
   HomeStateBuilder();
 
   HomeStateBuilder get _$this {
@@ -81,6 +96,7 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
       _isLoading = $v.isLoading;
       _error = $v.error;
       _lines = $v.lines.toBuilder();
+      _hasReachedEndOfResults = $v.hasReachedEndOfResults;
       _$v = null;
     }
     return this;
@@ -107,7 +123,11 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
                   isLoading, 'HomeState', 'isLoading'),
               error: BuiltValueNullFieldError.checkNotNull(
                   error, 'HomeState', 'error'),
-              lines: lines.build());
+              lines: lines.build(),
+              hasReachedEndOfResults: BuiltValueNullFieldError.checkNotNull(
+                  hasReachedEndOfResults,
+                  'HomeState',
+                  'hasReachedEndOfResults'));
     } catch (_) {
       late String _$failedField;
       try {

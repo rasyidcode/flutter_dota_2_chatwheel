@@ -2,18 +2,19 @@
 // in flutter_dota_2_chatwheel/test/data/repository/chatwheel_repository_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i5;
+import 'dart:async' as _i6;
 
-import 'package:built_collection/src/list.dart' as _i3;
+import 'package:built_collection/src/list.dart' as _i4;
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart'
-    as _i7;
+    as _i8;
 import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event_result.dart'
     as _i2;
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart'
-    as _i4;
+    as _i5;
 import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart'
-    as _i6;
+    as _i7;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:sqflite_common/sqlite_api.dart' as _i3;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: comment_references
@@ -24,7 +25,9 @@ import 'package:mockito/mockito.dart' as _i1;
 class _FakeChatwheelEventResult extends _i1.Fake
     implements _i2.ChatwheelEventResult {}
 
-class _FakeBuiltList<E> extends _i1.Fake implements _i3.BuiltList<E> {
+class _FakeDatabase extends _i1.Fake implements _i3.Database {}
+
+class _FakeBuiltList<E> extends _i1.Fake implements _i4.BuiltList<E> {
   @override
   String toString() => super.toString();
 }
@@ -33,46 +36,59 @@ class _FakeBuiltList<E> extends _i1.Fake implements _i3.BuiltList<E> {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockChatwheelDataSource extends _i1.Mock
-    implements _i4.ChatwheelDataSource {
+    implements _i5.ChatwheelDataSource {
   MockChatwheelDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<_i2.ChatwheelEventResult> getChatwheelEvents() =>
+  _i6.Future<_i2.ChatwheelEventResult> getChatwheelEvents() =>
       (super.noSuchMethod(Invocation.method(#getChatwheelEvents, []),
               returnValue: Future<_i2.ChatwheelEventResult>.value(
                   _FakeChatwheelEventResult()))
-          as _i5.Future<_i2.ChatwheelEventResult>);
+          as _i6.Future<_i2.ChatwheelEventResult>);
 }
 
 /// A class which mocks [ChatwheelLineProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockChatwheelLineProvider extends _i1.Mock
-    implements _i6.ChatwheelLineProvider {
+    implements _i7.ChatwheelLineProvider {
   MockChatwheelLineProvider() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<List<Object?>?> insertBatch(List<_i7.ChatwheelLine>? lines,
+  _i3.Database get db =>
+      (super.noSuchMethod(Invocation.getter(#db), returnValue: _FakeDatabase())
+          as _i3.Database);
+  @override
+  set db(_i3.Database? _db) => super.noSuchMethod(Invocation.setter(#db, _db),
+      returnValueForMissingStub: null);
+  @override
+  _i6.Future<List<Object?>?> insertBatch(List<_i8.ChatwheelLine>? lines,
           {dynamic returnResult = false}) =>
       (super.noSuchMethod(
               Invocation.method(
                   #insertBatch, [lines], {#returnResult: returnResult}),
               returnValue: Future<List<Object?>?>.value())
-          as _i5.Future<List<Object?>?>);
+          as _i6.Future<List<Object?>?>);
   @override
-  _i5.Future<_i3.BuiltList<_i7.ChatwheelLine>> getLines(
+  _i6.Future<_i4.BuiltList<_i8.ChatwheelLine>> getLines(
           int? offset, int? limit) =>
       (super.noSuchMethod(Invocation.method(#getLines, [offset, limit]),
-              returnValue: Future<_i3.BuiltList<_i7.ChatwheelLine>>.value(
-                  _FakeBuiltList<_i7.ChatwheelLine>()))
-          as _i5.Future<_i3.BuiltList<_i7.ChatwheelLine>>);
+              returnValue: Future<_i4.BuiltList<_i8.ChatwheelLine>>.value(
+                  _FakeBuiltList<_i8.ChatwheelLine>()))
+          as _i6.Future<_i4.BuiltList<_i8.ChatwheelLine>>);
   @override
-  _i5.Future<List<Map<String, Object?>>> countAllLines() => (super.noSuchMethod(
+  _i6.Future<List<Map<String, Object?>>> countAllLines() => (super.noSuchMethod(
       Invocation.method(#countAllLines, []),
       returnValue: Future<List<Map<String, Object?>>>.value(
-          <Map<String, Object?>>[])) as _i5.Future<List<Map<String, Object?>>>);
+          <Map<String, Object?>>[])) as _i6.Future<List<Map<String, Object?>>>);
+  @override
+  _i6.Future<Null?> open() => (super.noSuchMethod(Invocation.method(#open, []),
+      returnValue: Future<Null?>.value()) as _i6.Future<Null?>);
+  @override
+  void close() => super.noSuchMethod(Invocation.method(#close, []),
+      returnValueForMissingStub: null);
 }

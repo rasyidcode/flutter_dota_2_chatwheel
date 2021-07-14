@@ -12,3 +12,5 @@ abstract class HomeInitiated extends HomeEvent
 
   factory HomeInitiated([updates(HomeInitiatedBuilder b)]) = _$HomeInitiated;
 }
+
+class HomeNextPage extends HomeEvent {}

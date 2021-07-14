@@ -11,29 +11,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this._chatwheelRepository) : super(HomeState.initial());
 
   void onHomeInit() {
-    _chatwheelRepository.init();
     add(HomeInitiated());
+  }
+
+  void fetchNextPage() {
+    add(HomeNextPage());
   }
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if (event is HomeInitiated) {
-      yield HomeState.loading();
+      yield* mapInitEvent();
+    } else if (event is HomeNextPage) {
+      yield* mapNextPageEvent();
+    }
+  }
 
-      try {
-        // final events = await _chatwheelRepository.loadChatwheelEvents();
-        final lines = await _chatwheelRepository.loadChatwheelLines(start: 0);
-        // yield HomeState.success(lines);
-        yield HomeState.success(lines);
-      } on NoElementFoundException catch (e) {
-        yield HomeState.failure(e.message);
-      } on UnhandledException catch (e) {
-        yield HomeState.failure(e.message);
-      } on EmptyResultException catch (e) {
-        yield HomeState.failure(e.message);
-      } catch (e) {
-        yield HomeState.failure('Something went wrong');
-      }
+  Stream<HomeState> mapInitEvent() async* {
+    yield HomeState.loading();
+    _chatwheelRepository.init();
+
+    try {
+      await _chatwheelRepository.storeChatwheels();
+
+      final lines = await _chatwheelRepository.getLines();
+      yield HomeState.success(lines);
+    } on NoElementFoundException catch (e) {
+      yield HomeState.failure(e.message);
+    } on UnhandledException catch (e) {
+      yield HomeState.failure(e.message);
+    } on EmptyResultException catch (e) {
+      yield HomeState.failure(e.message);
+    }
+  }
+
+  Stream<HomeState> mapNextPageEvent() async* {
+    try {
+      final lines = await _chatwheelRepository.getLines();
+      yield HomeState.success(state.lines + lines);
+    } on EmptyResultException catch (_) {
+      yield state.rebuild((b) => b..hasReachedEndOfResults = true);
     }
   }
 }

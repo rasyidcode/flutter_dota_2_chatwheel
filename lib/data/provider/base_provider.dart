@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 abstract class BaseProvider {
-  late Database db;
+  Database? db;
 
   Future<Null> open() async {
     final databasePath = await getDatabasesPath();
@@ -26,6 +26,6 @@ abstract class BaseProvider {
   }
 
   void close() {
-    db.close();
+    db?.close();
   }
 }

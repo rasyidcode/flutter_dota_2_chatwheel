@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homeBloc = KiwiContainer().resolve<HomeBloc>();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  int _selectedEvent = 0;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -48,18 +48,37 @@ class _HomePageState extends State<HomePage> {
             }
 
             if (state.isSuccessful) {
-              return ListView.builder(
-                  itemCount: state.lines.length,
+              return NotificationListener(
+                onNotification: (ScrollNotification scrollNotification) {
+                  if (scrollNotification is ScrollEndNotification &&
+                      _scrollController.position.extentAfter == 0) {
+                    _homeBloc.fetchNextPage();
+                  }
+                  return false;
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: state.hasReachedEndOfResults
+                      ? state.lines.length
+                      : state.lines.length + 1,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(state.lines[index].line),
-                      trailing: IconButton(
-                          onPressed: () async {
-                            await _audioPlayer.play(state.lines[index].url);
-                          },
-                          icon: Icon(Icons.audiotrack)),
-                    );
-                  });
+                    return index >= state.lines.length &&
+                            !state.hasReachedEndOfResults
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ListTile(
+                            title: Text(state.lines[index].line),
+                            trailing: IconButton(
+                                onPressed: () async {
+                                  await _audioPlayer
+                                      .play(state.lines[index].url);
+                                },
+                                icon: Icon(Icons.audiotrack)),
+                          );
+                  },
+                ),
+              );
             } else {
               return Center(
                 child: Text(state.error),
