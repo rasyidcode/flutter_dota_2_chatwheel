@@ -11,6 +11,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this._chatwheelRepository) : super(HomeState.initial());
 
   void onHomeInit() {
+    _chatwheelRepository.init();
     add(HomeInitiated());
   }
 
@@ -30,7 +31,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield HomeState.failure(e.message);
       } on EmptyResultException catch (e) {
         yield HomeState.failure(e.message);
-      } catch (_) {
+      } catch (e) {
         yield HomeState.failure('Something went wrong');
       }
     }

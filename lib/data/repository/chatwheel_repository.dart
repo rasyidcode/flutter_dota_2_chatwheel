@@ -11,6 +11,11 @@ class ChatwheelRepository {
 
   ChatwheelRepository(this._chatwheelDataSource, this._provider);
 
+  void init() async {
+    // open database connection
+    await (_provider as ChatwheelLineProvider).open();
+  }
+
   // play song from internet
   // return BuiltList<ChatwheelEvent>
   Future<BuiltList<ChatwheelEvent?>> loadChatwheelEvents() async {
@@ -31,16 +36,17 @@ class ChatwheelRepository {
     if (chatwheelEvents.events.length == 0) throw EmptyResultException();
 
     final _result = await (_provider as ChatwheelLineProvider).countAllLines();
+    print(_result[0]['total']);
     if (_result[0]['total'] == 0) {
+      final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       chatwheelEvents.events.forEach((event) {
         event?.packs.forEach((pack) {
           pack.lines.forEach((line) {
-            final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
             final ChatwheelLine localLine = ChatwheelLine((b) => b
-              ..eventName = event.eventName
-              ..packName = pack.packName
+              ..eventName = ''
+              ..packName = ''
               ..line = line.line
-              ..lineTranslate = line.lineTranslate
+              ..lineTranslate = line.lineTranslate ?? ''
               ..url = line.url
               ..localPath = ''
               ..createdAt = currentTime
