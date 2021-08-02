@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
@@ -78,40 +79,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           },
         );
         // update downloadedId chatwheel on database
+        BuiltList<ChatwheelLine> newLines = BuiltList<ChatwheelLine>();
         if (_downloadingId != null) {
           bool isUpdated = await _chatwheelRepository.updateLine(
               _downloadingId!, savedFile.path);
           if (isUpdated) {
-            print('before : ');
-            print(state.lines[_downloadingIndex]);
-
-            print(savedFile.path);
-            // state.lines.toBuilder().update((b) => b[_downloadingIndex]
-            //     .toBuilder()
-            //     .update((b) => b..localPath = savedFile?.path));
-
-            // state.lines[_downloadingIndex]
-            //     .toBuilder()
-            //     .update((b) => b..localPath = savedFile?.path);
-
-            // state.lines
-            // state.lines.toBuilder().replace(state.lines);
-            // var newLines = state.lines.rebuild((b) => b[_downloadingIndex]
-            //     .rebuild((b) => b..localPath = savedFile?.path));
             ChatwheelLine cl = state.lines[_downloadingIndex]
                 .rebuild((b) => b..localPath = savedFile?.path);
             var preNewLines = state.lines.toBuilder();
             preNewLines[_downloadingIndex] = cl;
-            // var newLines = state.lines.rebuild((b) => b..update(preNewLines);
-            var newLines = preNewLines.build();
-            print('after : ');
-            // print(newLines[_downloadingIndex]);
-            // print(cl);
-            print(newLines[_downloadingIndex]);
+            newLines = preNewLines.build();
           }
+        } else {
+          newLines = state.lines;
         }
 
-        yield HomeState.downloaded(state.lines, _downloadingId);
+        yield HomeState.downloaded(newLines, _downloadingId);
       } else {
         yield HomeState.downloadFail(state.lines, _downloadingId);
       }
