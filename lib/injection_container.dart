@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart';
 import 'package:flutter_dota_2_chatwheel/data/repository/chatwheel_repository.dart';
@@ -11,6 +12,7 @@ void initKiwi() {
     // Components
     ..registerInstance(http.Client())
     ..registerInstance(ChatwheelScraper())
+    ..registerInstance(Dio())
     // Data Source
     ..registerFactory((c) => ChatwheelDataSource(c.resolve(), c.resolve()))
     // Provider
@@ -19,5 +21,5 @@ void initKiwi() {
     ..registerFactory((c) =>
         ChatwheelRepository(c.resolve(), c.resolve<ChatwheelLineProvider>()))
     // BloC
-    ..registerFactory((c) => HomeBloc(c.resolve()));
+    ..registerFactory((c) => HomeBloc(c.resolve(), c.resolve()));
 }

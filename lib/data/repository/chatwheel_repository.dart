@@ -28,7 +28,6 @@ class ChatwheelRepository {
 
     final _result = await (_provider as ChatwheelLineProvider).countAllLines();
     if (_result != null) {
-      print(_result[0]['total']);
       if (_result[0]['total'] == 0) {
         final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         chatwheelEvents.events.forEach((event) {

@@ -69,12 +69,25 @@ class _HomePageState extends State<HomePage> {
                           )
                         : ListTile(
                             title: Text(state.lines[index].line),
-                            trailing: IconButton(
-                                onPressed: () async {
-                                  await _audioPlayer
-                                      .play(state.lines[index].url);
-                                },
-                                icon: Icon(Icons.audiotrack)),
+                            trailing: state.isDownloading
+                                ? CircularProgressIndicator()
+                                : state.isDownloaded
+                                    ? IconButton(
+                                        onPressed: () async {
+                                          // await _audioPlayer
+                                          //     .play(state.lines[index].url);
+                                        },
+                                        icon: Icon(Icons.audiotrack))
+                                    : IconButton(
+                                        onPressed: () {
+                                          _homeBloc.downloadChatwheel(
+                                              downloadUrl:
+                                                  state.lines[index].url,
+                                              fileName:
+                                                  state.lines[index].line);
+                                        },
+                                        icon: Icon(Icons.download),
+                                      ),
                           );
                   },
                 ),

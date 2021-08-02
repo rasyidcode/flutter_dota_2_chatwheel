@@ -9,11 +9,15 @@ part 'home_state.g.dart';
 abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
   bool get isLoading;
   String get error;
-  // BuiltList<ChatwheelEvent?> get events;
   BuiltList<ChatwheelLine> get lines;
   bool get hasReachedEndOfResults;
+  double get downloadProgress;
 
   bool get isSuccessful => !isLoading && lines.isNotEmpty && error == '';
+
+  bool get isDownloading => downloadProgress > 0.0;
+
+  bool get isDownloaded => downloadProgress == 100.0;
 
   HomeState._();
 
@@ -24,7 +28,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
-      ..hasReachedEndOfResults = false);
+      ..hasReachedEndOfResults = false
+      ..downloadProgress = 0.0);
   }
 
   factory HomeState.loading() {
@@ -32,7 +37,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isLoading = true
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
-      ..hasReachedEndOfResults = false);
+      ..hasReachedEndOfResults = false
+      ..downloadProgress = 0.0);
   }
 
   factory HomeState.failure(String error) {
@@ -40,7 +46,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = error
-      ..hasReachedEndOfResults = false);
+      ..hasReachedEndOfResults = false
+      ..downloadProgress = 0.0);
   }
 
   factory HomeState.success(BuiltList<ChatwheelLine> events) {
@@ -48,6 +55,16 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isLoading = false
       ..lines.replace(events)
       ..error = ''
-      ..hasReachedEndOfResults = false);
+      ..hasReachedEndOfResults = false
+      ..downloadProgress = 0.0);
+  }
+
+  factory HomeState.downloading(double progress) {
+    return HomeState((b) => b
+      ..isLoading = false
+      ..lines.replace(BuiltList<ChatwheelLine>())
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..downloadProgress = progress);
   }
 }

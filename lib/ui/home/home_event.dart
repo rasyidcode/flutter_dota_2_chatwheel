@@ -14,3 +14,5 @@ abstract class HomeInitiated extends HomeEvent
 }
 
 class HomeNextPage extends HomeEvent {}
+
+class HomeDownload extends HomeEvent {}

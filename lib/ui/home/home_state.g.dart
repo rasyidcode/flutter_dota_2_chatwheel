@@ -15,6 +15,8 @@ class _$HomeState extends HomeState {
   final BuiltList<ChatwheelLine> lines;
   @override
   final bool hasReachedEndOfResults;
+  @override
+  final double downloadProgress;
 
   factory _$HomeState([void Function(HomeStateBuilder)? updates]) =>
       (new HomeStateBuilder()..update(updates)).build();
@@ -23,13 +25,16 @@ class _$HomeState extends HomeState {
       {required this.isLoading,
       required this.error,
       required this.lines,
-      required this.hasReachedEndOfResults})
+      required this.hasReachedEndOfResults,
+      required this.downloadProgress})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(isLoading, 'HomeState', 'isLoading');
     BuiltValueNullFieldError.checkNotNull(error, 'HomeState', 'error');
     BuiltValueNullFieldError.checkNotNull(lines, 'HomeState', 'lines');
     BuiltValueNullFieldError.checkNotNull(
         hasReachedEndOfResults, 'HomeState', 'hasReachedEndOfResults');
+    BuiltValueNullFieldError.checkNotNull(
+        downloadProgress, 'HomeState', 'downloadProgress');
   }
 
   @override
@@ -46,14 +51,18 @@ class _$HomeState extends HomeState {
         isLoading == other.isLoading &&
         error == other.error &&
         lines == other.lines &&
-        hasReachedEndOfResults == other.hasReachedEndOfResults;
+        hasReachedEndOfResults == other.hasReachedEndOfResults &&
+        downloadProgress == other.downloadProgress;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, isLoading.hashCode), error.hashCode), lines.hashCode),
-        hasReachedEndOfResults.hashCode));
+        $jc(
+            $jc($jc($jc(0, isLoading.hashCode), error.hashCode),
+                lines.hashCode),
+            hasReachedEndOfResults.hashCode),
+        downloadProgress.hashCode));
   }
 
   @override
@@ -62,7 +71,8 @@ class _$HomeState extends HomeState {
           ..add('isLoading', isLoading)
           ..add('error', error)
           ..add('lines', lines)
-          ..add('hasReachedEndOfResults', hasReachedEndOfResults))
+          ..add('hasReachedEndOfResults', hasReachedEndOfResults)
+          ..add('downloadProgress', downloadProgress))
         .toString();
   }
 }
@@ -88,6 +98,11 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
   set hasReachedEndOfResults(bool? hasReachedEndOfResults) =>
       _$this._hasReachedEndOfResults = hasReachedEndOfResults;
 
+  double? _downloadProgress;
+  double? get downloadProgress => _$this._downloadProgress;
+  set downloadProgress(double? downloadProgress) =>
+      _$this._downloadProgress = downloadProgress;
+
   HomeStateBuilder();
 
   HomeStateBuilder get _$this {
@@ -97,6 +112,7 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
       _error = $v.error;
       _lines = $v.lines.toBuilder();
       _hasReachedEndOfResults = $v.hasReachedEndOfResults;
+      _downloadProgress = $v.downloadProgress;
       _$v = null;
     }
     return this;
@@ -127,7 +143,9 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
               hasReachedEndOfResults: BuiltValueNullFieldError.checkNotNull(
                   hasReachedEndOfResults,
                   'HomeState',
-                  'hasReachedEndOfResults'));
+                  'hasReachedEndOfResults'),
+              downloadProgress: BuiltValueNullFieldError.checkNotNull(
+                  downloadProgress, 'HomeState', 'downloadProgress'));
     } catch (_) {
       late String _$failedField;
       try {
