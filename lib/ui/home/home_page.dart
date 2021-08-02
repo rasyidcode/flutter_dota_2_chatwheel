@@ -69,25 +69,46 @@ class _HomePageState extends State<HomePage> {
                           )
                         : ListTile(
                             title: Text(state.lines[index].line),
-                            trailing: state.isDownloading
-                                ? CircularProgressIndicator()
-                                : state.isDownloaded
-                                    ? IconButton(
-                                        onPressed: () async {
-                                          // await _audioPlayer
-                                          //     .play(state.lines[index].url);
-                                        },
-                                        icon: Icon(Icons.audiotrack))
-                                    : IconButton(
-                                        onPressed: () {
-                                          _homeBloc.downloadChatwheel(
-                                              downloadUrl:
-                                                  state.lines[index].url,
-                                              fileName:
-                                                  state.lines[index].line);
-                                        },
-                                        icon: Icon(Icons.download),
-                                      ),
+                            trailing: state.lines[index].localPath.isNotEmpty
+                                ? IconButton(
+                                    onPressed: () async {
+                                      await _audioPlayer.play(
+                                          state.lines[index].localPath,
+                                          isLocal: true);
+                                    },
+                                    icon: Icon(Icons.play_arrow,
+                                        color: Colors.green))
+                                : state.isDownloading &&
+                                        state.downloadingId ==
+                                            state.lines[index].id
+                                    ? CircularProgressIndicator()
+                                    : state.isDownloaded &&
+                                            state.downloadingId ==
+                                                state.lines[index].id
+                                        ? IconButton(
+                                            onPressed: () async {
+                                              await _audioPlayer.play(
+                                                  state.lines[index].localPath,
+                                                  isLocal: true);
+                                            },
+                                            icon: Icon(
+                                              Icons.play_arrow,
+                                              color: Colors.green,
+                                            ))
+                                        : IconButton(
+                                            onPressed: () {
+                                              _homeBloc.downloadChatwheel(
+                                                  downloadUrl:
+                                                      state.lines[index].url,
+                                                  fileName:
+                                                      state.lines[index].line,
+                                                  downloadingId:
+                                                      state.lines[index].id,
+                                                  downloadingIndex: index);
+                                            },
+                                            icon: Icon(Icons.download,
+                                                color: Colors.orange),
+                                          ),
                           );
                   },
                 ),

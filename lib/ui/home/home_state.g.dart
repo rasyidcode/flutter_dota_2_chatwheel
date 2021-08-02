@@ -16,7 +16,13 @@ class _$HomeState extends HomeState {
   @override
   final bool hasReachedEndOfResults;
   @override
-  final double downloadProgress;
+  final bool isDownloading;
+  @override
+  final bool isDownloaded;
+  @override
+  final bool isFailDownload;
+  @override
+  final int? downloadingId;
 
   factory _$HomeState([void Function(HomeStateBuilder)? updates]) =>
       (new HomeStateBuilder()..update(updates)).build();
@@ -26,7 +32,10 @@ class _$HomeState extends HomeState {
       required this.error,
       required this.lines,
       required this.hasReachedEndOfResults,
-      required this.downloadProgress})
+      required this.isDownloading,
+      required this.isDownloaded,
+      required this.isFailDownload,
+      this.downloadingId})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(isLoading, 'HomeState', 'isLoading');
     BuiltValueNullFieldError.checkNotNull(error, 'HomeState', 'error');
@@ -34,7 +43,11 @@ class _$HomeState extends HomeState {
     BuiltValueNullFieldError.checkNotNull(
         hasReachedEndOfResults, 'HomeState', 'hasReachedEndOfResults');
     BuiltValueNullFieldError.checkNotNull(
-        downloadProgress, 'HomeState', 'downloadProgress');
+        isDownloading, 'HomeState', 'isDownloading');
+    BuiltValueNullFieldError.checkNotNull(
+        isDownloaded, 'HomeState', 'isDownloaded');
+    BuiltValueNullFieldError.checkNotNull(
+        isFailDownload, 'HomeState', 'isFailDownload');
   }
 
   @override
@@ -52,17 +65,26 @@ class _$HomeState extends HomeState {
         error == other.error &&
         lines == other.lines &&
         hasReachedEndOfResults == other.hasReachedEndOfResults &&
-        downloadProgress == other.downloadProgress;
+        isDownloading == other.isDownloading &&
+        isDownloaded == other.isDownloaded &&
+        isFailDownload == other.isFailDownload &&
+        downloadingId == other.downloadingId;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, isLoading.hashCode), error.hashCode),
-                lines.hashCode),
-            hasReachedEndOfResults.hashCode),
-        downloadProgress.hashCode));
+            $jc(
+                $jc(
+                    $jc(
+                        $jc($jc($jc(0, isLoading.hashCode), error.hashCode),
+                            lines.hashCode),
+                        hasReachedEndOfResults.hashCode),
+                    isDownloading.hashCode),
+                isDownloaded.hashCode),
+            isFailDownload.hashCode),
+        downloadingId.hashCode));
   }
 
   @override
@@ -72,7 +94,10 @@ class _$HomeState extends HomeState {
           ..add('error', error)
           ..add('lines', lines)
           ..add('hasReachedEndOfResults', hasReachedEndOfResults)
-          ..add('downloadProgress', downloadProgress))
+          ..add('isDownloading', isDownloading)
+          ..add('isDownloaded', isDownloaded)
+          ..add('isFailDownload', isFailDownload)
+          ..add('downloadingId', downloadingId))
         .toString();
   }
 }
@@ -98,10 +123,24 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
   set hasReachedEndOfResults(bool? hasReachedEndOfResults) =>
       _$this._hasReachedEndOfResults = hasReachedEndOfResults;
 
-  double? _downloadProgress;
-  double? get downloadProgress => _$this._downloadProgress;
-  set downloadProgress(double? downloadProgress) =>
-      _$this._downloadProgress = downloadProgress;
+  bool? _isDownloading;
+  bool? get isDownloading => _$this._isDownloading;
+  set isDownloading(bool? isDownloading) =>
+      _$this._isDownloading = isDownloading;
+
+  bool? _isDownloaded;
+  bool? get isDownloaded => _$this._isDownloaded;
+  set isDownloaded(bool? isDownloaded) => _$this._isDownloaded = isDownloaded;
+
+  bool? _isFailDownload;
+  bool? get isFailDownload => _$this._isFailDownload;
+  set isFailDownload(bool? isFailDownload) =>
+      _$this._isFailDownload = isFailDownload;
+
+  int? _downloadingId;
+  int? get downloadingId => _$this._downloadingId;
+  set downloadingId(int? downloadingId) =>
+      _$this._downloadingId = downloadingId;
 
   HomeStateBuilder();
 
@@ -112,7 +151,10 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
       _error = $v.error;
       _lines = $v.lines.toBuilder();
       _hasReachedEndOfResults = $v.hasReachedEndOfResults;
-      _downloadProgress = $v.downloadProgress;
+      _isDownloading = $v.isDownloading;
+      _isDownloaded = $v.isDownloaded;
+      _isFailDownload = $v.isFailDownload;
+      _downloadingId = $v.downloadingId;
       _$v = null;
     }
     return this;
@@ -144,8 +186,13 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
                   hasReachedEndOfResults,
                   'HomeState',
                   'hasReachedEndOfResults'),
-              downloadProgress: BuiltValueNullFieldError.checkNotNull(
-                  downloadProgress, 'HomeState', 'downloadProgress'));
+              isDownloading: BuiltValueNullFieldError.checkNotNull(
+                  isDownloading, 'HomeState', 'isDownloading'),
+              isDownloaded: BuiltValueNullFieldError.checkNotNull(
+                  isDownloaded, 'HomeState', 'isDownloaded'),
+              isFailDownload: BuiltValueNullFieldError.checkNotNull(
+                  isFailDownload, 'HomeState', 'isFailDownload'),
+              downloadingId: downloadingId);
     } catch (_) {
       late String _$failedField;
       try {

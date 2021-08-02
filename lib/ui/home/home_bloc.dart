@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/repository/chatwheel_repository.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
@@ -13,9 +14,13 @@ import 'package:permission_handler/permission_handler.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ChatwheelRepository _chatwheelRepository;
   final Dio _dio;
+
+  HomeBloc(this._chatwheelRepository, this._dio) : super(HomeState.initial());
+
   String _downloadUrl = '';
   String _fileName = '';
-  HomeBloc(this._chatwheelRepository, this._dio) : super(HomeState.initial());
+  int? _downloadingId;
+  int _downloadingIndex = -1;
 
   void onHomeInit() {
     add(HomeInitiated());
@@ -26,9 +31,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void downloadChatwheel(
-      {required String downloadUrl, required String fileName}) {
+      {required String downloadUrl,
+      required String fileName,
+      required int downloadingIndex,
+      int? downloadingId}) {
     _downloadUrl = downloadUrl;
     _fileName = fileName;
+    _downloadingId = downloadingId;
+    _downloadingIndex = downloadingIndex;
     add(HomeDownload());
   }
 
@@ -44,6 +54,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<HomeState> mapDownloadEvent() async* {
+    yield HomeState.downloading(state.lines, _downloadingId);
     try {
       File? savedFile;
       if (await Permission.storage.isGranted) {
@@ -53,7 +64,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (permissionStatus == PermissionStatus.granted) {
           savedFile = await _handleStoragePermissionGranted();
         } else {
-          yield HomeState.failure('Need storage permission, please accept');
+          yield HomeState.downloadFail(state.lines, _downloadingId);
         }
       }
 
@@ -61,17 +72,51 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         await _dio.download(
           _downloadUrl,
           savedFile.path,
-          onReceiveProgress: (val1, val2) async* {
+          onReceiveProgress: (val1, val2) {
             double progress = val1 / val2;
             print(progress);
-            yield HomeState.downloading(progress);
           },
         );
+        // update downloadedId chatwheel on database
+        if (_downloadingId != null) {
+          bool isUpdated = await _chatwheelRepository.updateLine(
+              _downloadingId!, savedFile.path);
+          if (isUpdated) {
+            print('before : ');
+            print(state.lines[_downloadingIndex]);
+
+            print(savedFile.path);
+            // state.lines.toBuilder().update((b) => b[_downloadingIndex]
+            //     .toBuilder()
+            //     .update((b) => b..localPath = savedFile?.path));
+
+            // state.lines[_downloadingIndex]
+            //     .toBuilder()
+            //     .update((b) => b..localPath = savedFile?.path);
+
+            // state.lines
+            // state.lines.toBuilder().replace(state.lines);
+            // var newLines = state.lines.rebuild((b) => b[_downloadingIndex]
+            //     .rebuild((b) => b..localPath = savedFile?.path));
+            ChatwheelLine cl = state.lines[_downloadingIndex]
+                .rebuild((b) => b..localPath = savedFile?.path);
+            var preNewLines = state.lines.toBuilder();
+            preNewLines[_downloadingIndex] = cl;
+            // var newLines = state.lines.rebuild((b) => b..update(preNewLines);
+            var newLines = preNewLines.build();
+            print('after : ');
+            // print(newLines[_downloadingIndex]);
+            // print(cl);
+            print(newLines[_downloadingIndex]);
+          }
+        }
+
+        yield HomeState.downloaded(state.lines, _downloadingId);
       } else {
-        yield HomeState.failure('savedFile returns null');
+        yield HomeState.downloadFail(state.lines, _downloadingId);
       }
     } catch (e) {
-      yield HomeState.failure('Download error');
+      yield HomeState.downloadFail(state.lines, _downloadingId);
     }
   }
 

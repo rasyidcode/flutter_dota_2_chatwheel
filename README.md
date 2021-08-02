@@ -16,4 +16,5 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## Built runner command
-flutter packages pub run build_runner build/watch
+flutter packages pub run build_runner build
+flutter packages pub run build_runner watch

@@ -11,13 +11,12 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
   String get error;
   BuiltList<ChatwheelLine> get lines;
   bool get hasReachedEndOfResults;
-  double get downloadProgress;
+  bool get isDownloading;
+  bool get isDownloaded;
+  bool get isFailDownload;
+  int? get downloadingId;
 
   bool get isSuccessful => !isLoading && lines.isNotEmpty && error == '';
-
-  bool get isDownloading => downloadProgress > 0.0;
-
-  bool get isDownloaded => downloadProgress == 100.0;
 
   HomeState._();
 
@@ -29,7 +28,9 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..downloadProgress = 0.0);
+      ..isDownloading = false
+      ..isDownloaded = false
+      ..isFailDownload = false);
   }
 
   factory HomeState.loading() {
@@ -38,7 +39,9 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..downloadProgress = 0.0);
+      ..isDownloading = false
+      ..isDownloaded = false
+      ..isFailDownload = false);
   }
 
   factory HomeState.failure(String error) {
@@ -47,24 +50,55 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = error
       ..hasReachedEndOfResults = false
-      ..downloadProgress = 0.0);
+      ..isDownloading = false
+      ..isDownloaded = false
+      ..isFailDownload = false);
   }
 
-  factory HomeState.success(BuiltList<ChatwheelLine> events) {
+  factory HomeState.success(BuiltList<ChatwheelLine> lines) {
     return HomeState((b) => b
       ..isLoading = false
-      ..lines.replace(events)
+      ..lines.replace(lines)
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..downloadProgress = 0.0);
+      ..isDownloading = false
+      ..isDownloaded = false
+      ..isFailDownload = false);
   }
 
-  factory HomeState.downloading(double progress) {
+  factory HomeState.downloading(BuiltList<ChatwheelLine> lines, int? dId) {
     return HomeState((b) => b
       ..isLoading = false
-      ..lines.replace(BuiltList<ChatwheelLine>())
+      ..lines.replace(lines)
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..downloadProgress = progress);
+      ..isDownloading = true
+      ..isDownloaded = false
+      ..isFailDownload = false
+      ..downloadingId = dId);
+  }
+
+  factory HomeState.downloaded(BuiltList<ChatwheelLine> lines, int? dId) {
+    return HomeState((b) => b
+      ..isLoading = false
+      ..lines.replace(lines)
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..isDownloading = false
+      ..isDownloaded = true
+      ..isFailDownload = false
+      ..downloadingId = dId);
+  }
+
+  factory HomeState.downloadFail(BuiltList<ChatwheelLine> lines, int? dId) {
+    return HomeState((b) => b
+      ..isLoading = false
+      ..lines.replace(lines)
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..isDownloading = false
+      ..isDownloaded = false
+      ..isFailDownload = true
+      ..downloadingId = dId);
   }
 }

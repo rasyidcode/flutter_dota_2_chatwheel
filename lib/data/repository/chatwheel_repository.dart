@@ -67,6 +67,13 @@ class ChatwheelRepository {
     _start += _perPage;
     return lines;
   }
+
+  Future<bool> updateLine(int id, String localPath) async {
+    final isUpdated =
+        await (_provider as ChatwheelLineProvider).updateLine(id, localPath);
+
+    return isUpdated;
+  }
 }
 
 class EmptyResultException implements Exception {

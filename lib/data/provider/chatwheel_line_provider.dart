@@ -3,11 +3,12 @@ import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
 
 class ChatwheelLineProvider extends BaseProvider {
+  final String _tableName = 'chatwheel_lines';
   Future<List<Object?>?> insertBatch(List<ChatwheelLine> lines,
       {returnResult: false}) async {
     final batch = db?.batch();
     lines.forEach((line) {
-      batch?.insert('chatwheel_lines', line.toMap());
+      batch?.insert(_tableName, line.toMap());
     });
     if (!returnResult) {
       await batch?.commit(noResult: true);
@@ -16,9 +17,18 @@ class ChatwheelLineProvider extends BaseProvider {
     }
   }
 
+  Future<bool> updateLine(int id, String localPath) async {
+    final updateRes = await db?.rawUpdate(
+        'UPDATE $_tableName SET localPath = ? WHERE id = ?', [localPath, id]);
+    if (updateRes != null)
+      return updateRes > 0;
+    else
+      return false;
+  }
+
   Future<BuiltList<ChatwheelLine>?> getLines(int offset, int limit) async {
-    final List<Map>? mapLines = await db
-        ?.rawQuery('SELECT * FROM chatwheel_lines LIMIT $offset,$limit');
+    final List<Map>? mapLines =
+        await db?.rawQuery('SELECT * FROM $_tableName LIMIT $offset,$limit');
     if (mapLines != null) {
       return mapLines
           .map((line) => ChatwheelLine((b) => b
@@ -38,6 +48,6 @@ class ChatwheelLineProvider extends BaseProvider {
   }
 
   Future<List<Map<String, Object?>>?> countAllLines() async {
-    return await db?.rawQuery('SELECT COUNT(*) as total FROM chatwheel_lines');
+    return await db?.rawQuery('SELECT COUNT(*) as total FROM $_tableName');
   }
 }
