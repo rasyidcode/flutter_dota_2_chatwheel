@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dota_2_chatwheel/injection_container.dart';
-import 'package:flutter_dota_2_chatwheel/ui/test_joystick/test_joystick_page.dart';
+import 'package:flutter_dota_2_chatwheel/ui/home/home_page.dart';
+import 'package:flutter_dota_2_chatwheel/ui/wheel/wheel_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: Scaffold(
-        body: Center(
-          child: Joypad(),
-        ),
-      ),
+      home: HomePage(),
     );
   }
 }

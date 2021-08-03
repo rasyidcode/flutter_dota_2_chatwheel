@@ -40,6 +40,7 @@ class ChatwheelRepository {
                 ..lineTranslate = line.lineTranslate ?? ''
                 ..url = line.url
                 ..localPath = ''
+                ..showInWheel = false
                 ..createdAt = currentTime
                 ..updatedAt = currentTime);
               localLines.add(localLine);

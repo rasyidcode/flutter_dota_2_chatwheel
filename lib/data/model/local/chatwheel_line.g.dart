@@ -41,6 +41,9 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
       'updatedAt',
       serializers.serialize(object.updatedAt,
           specifiedType: const FullType(int)),
+      'showInWheel',
+      serializers.serialize(object.showInWheel,
+          specifiedType: const FullType(bool)),
     ];
     Object? value;
     value = object.id;
@@ -100,6 +103,10 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
           result.updatedAt = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'showInWheel':
+          result.showInWheel = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
       }
     }
 
@@ -126,6 +133,8 @@ class _$ChatwheelLine extends ChatwheelLine {
   final int createdAt;
   @override
   final int updatedAt;
+  @override
+  final bool showInWheel;
 
   factory _$ChatwheelLine([void Function(ChatwheelLineBuilder)? updates]) =>
       (new ChatwheelLineBuilder()..update(updates)).build();
@@ -139,7 +148,8 @@ class _$ChatwheelLine extends ChatwheelLine {
       required this.url,
       required this.localPath,
       required this.createdAt,
-      required this.updatedAt})
+      required this.updatedAt,
+      required this.showInWheel})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         eventName, 'ChatwheelLine', 'eventName');
@@ -155,6 +165,8 @@ class _$ChatwheelLine extends ChatwheelLine {
         createdAt, 'ChatwheelLine', 'createdAt');
     BuiltValueNullFieldError.checkNotNull(
         updatedAt, 'ChatwheelLine', 'updatedAt');
+    BuiltValueNullFieldError.checkNotNull(
+        showInWheel, 'ChatwheelLine', 'showInWheel');
   }
 
   @override
@@ -176,7 +188,8 @@ class _$ChatwheelLine extends ChatwheelLine {
         url == other.url &&
         localPath == other.localPath &&
         createdAt == other.createdAt &&
-        updatedAt == other.updatedAt;
+        updatedAt == other.updatedAt &&
+        showInWheel == other.showInWheel;
   }
 
   @override
@@ -187,14 +200,18 @@ class _$ChatwheelLine extends ChatwheelLine {
                 $jc(
                     $jc(
                         $jc(
-                            $jc($jc($jc(0, id.hashCode), eventName.hashCode),
-                                packName.hashCode),
-                            line.hashCode),
-                        lineTranslate.hashCode),
-                    url.hashCode),
-                localPath.hashCode),
-            createdAt.hashCode),
-        updatedAt.hashCode));
+                            $jc(
+                                $jc(
+                                    $jc($jc(0, id.hashCode),
+                                        eventName.hashCode),
+                                    packName.hashCode),
+                                line.hashCode),
+                            lineTranslate.hashCode),
+                        url.hashCode),
+                    localPath.hashCode),
+                createdAt.hashCode),
+            updatedAt.hashCode),
+        showInWheel.hashCode));
   }
 
   @override
@@ -208,7 +225,8 @@ class _$ChatwheelLine extends ChatwheelLine {
           ..add('url', url)
           ..add('localPath', localPath)
           ..add('createdAt', createdAt)
-          ..add('updatedAt', updatedAt))
+          ..add('updatedAt', updatedAt)
+          ..add('showInWheel', showInWheel))
         .toString();
   }
 }
@@ -254,6 +272,10 @@ class ChatwheelLineBuilder
   int? get updatedAt => _$this._updatedAt;
   set updatedAt(int? updatedAt) => _$this._updatedAt = updatedAt;
 
+  bool? _showInWheel;
+  bool? get showInWheel => _$this._showInWheel;
+  set showInWheel(bool? showInWheel) => _$this._showInWheel = showInWheel;
+
   ChatwheelLineBuilder();
 
   ChatwheelLineBuilder get _$this {
@@ -268,6 +290,7 @@ class ChatwheelLineBuilder
       _localPath = $v.localPath;
       _createdAt = $v.createdAt;
       _updatedAt = $v.updatedAt;
+      _showInWheel = $v.showInWheel;
       _$v = null;
     }
     return this;
@@ -304,7 +327,9 @@ class ChatwheelLineBuilder
             createdAt: BuiltValueNullFieldError.checkNotNull(
                 createdAt, 'ChatwheelLine', 'createdAt'),
             updatedAt: BuiltValueNullFieldError.checkNotNull(
-                updatedAt, 'ChatwheelLine', 'updatedAt'));
+                updatedAt, 'ChatwheelLine', 'updatedAt'),
+            showInWheel: BuiltValueNullFieldError.checkNotNull(
+                showInWheel, 'ChatwheelLine', 'showInWheel'));
     replace(_$result);
     return _$result;
   }

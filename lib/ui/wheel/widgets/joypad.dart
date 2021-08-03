@@ -15,9 +15,10 @@ const double CHATWHEEL_PADDING = 30;
 const double DIAGONAL_VALUE = 29.5;
 const double CHATWHEEL_RADIUS = 110;
 
-class JoypadState extends State {
+class JoypadState extends State with TickerProviderStateMixin {
   Offset delta = Offset.zero;
 
+  // drag handler
   bool topLeftFired = false;
   bool topCenterFired = false;
   bool topRightFired = false;
@@ -27,9 +28,23 @@ class JoypadState extends State {
   bool bottomLeftFired = false;
   bool leftCenterFired = false;
 
+  // animation
+  late Animation<double> animation;
+  late AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    animation =
+        Tween<double>(begin: 10.0, end: 20.0).animate(animationController);
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 
   //--------- Start of function-----------------------//
@@ -37,7 +52,9 @@ class JoypadState extends State {
     // top left position
     if ((newDelta.dy >= -50 && newDelta.dy <= -30) &&
         (newDelta.dx >= -50 && newDelta.dx <= -30)) {
-      topLeftFired = true;
+      setState(() {
+        topLeftFired = true;
+      });
     }
 
     // top center position
@@ -137,6 +154,8 @@ class JoypadState extends State {
   }
 
   void handleTopLeftFired() {
+    animationController.forward();
+    print('executed');
     resetChatwheel();
   }
 
@@ -167,7 +186,6 @@ class JoypadState extends State {
   void handleLeftCenterFired() {
     resetChatwheel();
   }
-
   //--------- End of function-----------------------//
 
   //--------- Start of widget-----------------------//
@@ -223,12 +241,13 @@ class JoypadState extends State {
           child: Opacity(
             opacity: 1,
             child: SizedBox(
-              height: 10.0,
-              width: 10.0,
+              height: topLeftFired ? animation.value : 10.0,
+              width: topLeftFired ? animation.value : 10.0,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(5.0),
+                  borderRadius: BorderRadius.circular(
+                      topLeftFired ? animation.value / 2 : 5.0),
                 ),
               ),
             ),

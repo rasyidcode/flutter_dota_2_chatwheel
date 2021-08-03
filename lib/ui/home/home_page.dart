@@ -18,10 +18,13 @@ class _HomePageState extends State<HomePage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final ScrollController _scrollController = ScrollController();
 
+  late TextEditingController _topLeftTextController;
+
   @override
   void initState() {
     super.initState();
     _homeBloc.onHomeInit();
+    _topLeftTextController = TextEditingController(text: '[null]');
   }
 
   @override
@@ -72,6 +75,73 @@ class _HomePageState extends State<HomePage> {
       );
 
   Widget _listItem(ChatwheelLine cl, HomeState state, int index) => ListTile(
+        onLongPress: () {
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text('Set line on chatwheel'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                      onPressed: () {}, child: Text('set to chatwheel 1')),
+                  TextButton(
+                      onPressed: () {}, child: Text('set to chatwheel 2')),
+                  MaterialButton(
+                    color: Colors.green,
+                    onPressed: () {},
+                    child: Text('set to chatwheel 3'),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Close me!'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ),
+          );
+          // showDialog(
+          //     context: context,
+          //     builder: (BuildContext context) => AlertDialog(
+          //           content: Padding(
+          //             padding: const EdgeInsets.all(8.0),
+          //             child: Column(
+          //               mainAxisSize: MainAxisSize.min,
+          //               children: [
+          //                 Text('Add line to chatwheel'),
+          //                 SizedBox(height: 8.0),
+          //                 Row(
+          //                   children: [
+          //                     // top left wheel
+          //                     TextField(
+          //                       controller: _topLeftTextController,
+          //                       readOnly: true,
+          //                     ),
+          //                     Spacer(),
+          //                     MaterialButton(
+          //                       onPressed: () {
+          //                         print('attaching');
+          //                       },
+          //                       child: Text('attach'),
+          //                     )
+          //                   ],
+          //                 ),
+          //                 SizedBox(height: 16.0),
+          //                 MaterialButton(
+          //                   onPressed: () {
+          //                     Navigator.pop(context);
+          //                   },
+          //                   child: Text('confirm'),
+          //                 )
+          //               ],
+          //             ),
+          //           ),
+          //         ));
+        },
         title: Text(cl.line),
         trailing: cl.localPath.isNotEmpty
             ? _playButton(state, cl)
@@ -110,10 +180,15 @@ class _HomePageState extends State<HomePage> {
                   controller: _scrollController,
                   itemCount: _chatwheelItemCount(state),
                   itemBuilder: (BuildContext context, int index) {
-                    ChatwheelLine chatwheel = state.lines[index];
+                    ChatwheelLine? chatwheel;
+                    try {
+                      chatwheel = state.lines[index];
+                    } on RangeError catch (_) {
+                      chatwheel = null;
+                    }
                     return _isAvailableNextPage(index, state)
                         ? _centerLoading()
-                        : _listItem(chatwheel, state, index);
+                        : _listItem(chatwheel!, state, index);
                   },
                 ),
               );

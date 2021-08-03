@@ -19,6 +19,7 @@ abstract class ChatwheelLine
   String get localPath;
   int get createdAt;
   int get updatedAt;
+  bool get showInWheel;
 
   ChatwheelLine._();
 
@@ -43,6 +44,7 @@ abstract class ChatwheelLine
       'url': url,
       'localPath': localPath,
       'createdAt': createdAt,
+      'showInWheel': showInWheel ? 1 : 0,
       'updatedAt': updatedAt,
     };
     return map;

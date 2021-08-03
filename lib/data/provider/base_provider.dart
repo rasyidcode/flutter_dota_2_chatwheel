@@ -7,7 +7,7 @@ abstract class BaseProvider {
   Future<Null> open() async {
     final databasePath = await getDatabasesPath();
     final String path = join(databasePath, 'flutter_dota_2_chatwheel.db');
-    db = await openDatabase(path, version: 1,
+    db = await openDatabase(path, version: 2,
         onCreate: (Database db, int version) async {
       await db.execute('''
       create table if not exists chatwheel_lines (
@@ -18,6 +18,7 @@ abstract class BaseProvider {
         lineTranslate text null,
         url text null,
         localPath text null,
+        showInWheel integer,
         createdAt integer,
         updatedAt integer
       )

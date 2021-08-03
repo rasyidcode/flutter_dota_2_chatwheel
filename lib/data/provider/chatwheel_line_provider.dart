@@ -17,6 +17,24 @@ class ChatwheelLineProvider extends BaseProvider {
     }
   }
 
+  Future<bool> addToWheels(int id) async {
+    final updateRes = await db?.rawUpdate(
+        'UPDATE $_tableName SET showInWheel = ? WHERE id = ?', [1, id]);
+    if (updateRes != null)
+      return updateRes > 0;
+    else
+      return false;
+  }
+
+  Future<bool> removeFromWheels(int id) async {
+    final updateRes = await db?.rawUpdate(
+        'UPDATE $_tableName SET showInWheel = ? WHERE id = ?', [0, id]);
+    if (updateRes != null)
+      return updateRes > 0;
+    else
+      return false;
+  }
+
   Future<bool> updateLine(int id, String localPath) async {
     final updateRes = await db?.rawUpdate(
         'UPDATE $_tableName SET localPath = ? WHERE id = ?', [localPath, id]);
@@ -24,6 +42,28 @@ class ChatwheelLineProvider extends BaseProvider {
       return updateRes > 0;
     else
       return false;
+  }
+
+  Future<BuiltList<ChatwheelLine>?> getShowInWheelLines() async {
+    final List<Map>? wheelLines =
+        await db?.rawQuery('SELECT * FROM $_tableName WHERE showInWheel = 1');
+    if (wheelLines != null) {
+      return wheelLines
+          .map((line) => ChatwheelLine((b) => b
+            ..id = line['id']
+            ..eventName = line['eventName']
+            ..packName = line['packName']
+            ..line = line['line']
+            ..lineTranslate = line['lineTranslate']
+            ..url = line['url']
+            ..showInWheel = line['showInWheel'] == 1 ? true : false
+            ..localPath = line['localPath']
+            ..createdAt = line['createdAt']
+            ..updatedAt = line['updatedAt']))
+          .toBuiltList();
+    } else {
+      return null;
+    }
   }
 
   Future<BuiltList<ChatwheelLine>?> getLines(int offset, int limit) async {
@@ -38,6 +78,7 @@ class ChatwheelLineProvider extends BaseProvider {
             ..line = line['line']
             ..lineTranslate = line['lineTranslate']
             ..url = line['url']
+            ..showInWheel = line['showInWheel'] == 1 ? true : false
             ..localPath = line['localPath']
             ..createdAt = line['createdAt']
             ..updatedAt = line['updatedAt']))
