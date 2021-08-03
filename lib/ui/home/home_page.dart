@@ -1,7 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dota_2_chatwheel/injection_container.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/ui/home/home_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/ui/home/home_state.dart';
 import 'package:kiwi/kiwi.dart';
@@ -30,6 +30,58 @@ class _HomePageState extends State<HomePage> {
     _homeBloc.close();
   }
 
+  int _chatwheelItemCount(HomeState state) => state.hasReachedEndOfResults
+      ? state.lines.length
+      : state.lines.length + 1;
+
+  bool _isAvailableNextPage(int index, HomeState state) =>
+      index >= state.lines.length && !state.hasReachedEndOfResults;
+
+  Widget _centerLoading() => Center(
+        child: CircularProgressIndicator(),
+      );
+
+  Widget _playButton(HomeState state, ChatwheelLine cl) => IconButton(
+        onPressed: () async {
+          await _audioPlayer.play(cl.localPath, isLocal: true);
+        },
+        icon: Icon(
+          Icons.play_arrow,
+          color: Colors.green,
+        ),
+      );
+
+  bool _isDownloading(HomeState state, ChatwheelLine cl) =>
+      state.isDownloading && state.downloadingId == cl.id;
+
+  bool _isDownloaded(HomeState state, ChatwheelLine cl) =>
+      state.isDownloaded && state.downloadingId == cl.id;
+
+  Widget _downloadButton(ChatwheelLine cl, int index) => IconButton(
+        onPressed: () {
+          _homeBloc.downloadChatwheel(
+              downloadUrl: cl.url,
+              fileName: cl.line,
+              downloadingId: cl.id,
+              downloadingIndex: index);
+        },
+        icon: Icon(
+          Icons.download,
+          color: Colors.orange,
+        ),
+      );
+
+  Widget _listItem(ChatwheelLine cl, HomeState state, int index) => ListTile(
+        title: Text(cl.line),
+        trailing: cl.localPath.isNotEmpty
+            ? _playButton(state, cl)
+            : _isDownloading(state, cl)
+                ? CircularProgressIndicator()
+                : _isDownloaded(state, cl)
+                    ? _playButton(state, cl)
+                    : _downloadButton(cl, index),
+      );
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -42,9 +94,7 @@ class _HomePageState extends State<HomePage> {
           bloc: _homeBloc,
           builder: (BuildContext context, HomeState state) {
             if (state.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return _centerLoading();
             }
 
             if (state.isSuccessful) {
@@ -58,58 +108,12 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: ListView.builder(
                   controller: _scrollController,
-                  itemCount: state.hasReachedEndOfResults
-                      ? state.lines.length
-                      : state.lines.length + 1,
+                  itemCount: _chatwheelItemCount(state),
                   itemBuilder: (BuildContext context, int index) {
-                    return index >= state.lines.length &&
-                            !state.hasReachedEndOfResults
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListTile(
-                            title: Text(state.lines[index].line),
-                            trailing: state.lines[index].localPath.isNotEmpty
-                                ? IconButton(
-                                    onPressed: () async {
-                                      await _audioPlayer.play(
-                                          state.lines[index].localPath,
-                                          isLocal: true);
-                                    },
-                                    icon: Icon(Icons.play_arrow,
-                                        color: Colors.green))
-                                : state.isDownloading &&
-                                        state.downloadingId ==
-                                            state.lines[index].id
-                                    ? CircularProgressIndicator()
-                                    : state.isDownloaded &&
-                                            state.downloadingId ==
-                                                state.lines[index].id
-                                        ? IconButton(
-                                            onPressed: () async {
-                                              await _audioPlayer.play(
-                                                  state.lines[index].localPath,
-                                                  isLocal: true);
-                                            },
-                                            icon: Icon(
-                                              Icons.play_arrow,
-                                              color: Colors.green,
-                                            ))
-                                        : IconButton(
-                                            onPressed: () {
-                                              _homeBloc.downloadChatwheel(
-                                                  downloadUrl:
-                                                      state.lines[index].url,
-                                                  fileName:
-                                                      state.lines[index].line,
-                                                  downloadingId:
-                                                      state.lines[index].id,
-                                                  downloadingIndex: index);
-                                            },
-                                            icon: Icon(Icons.download,
-                                                color: Colors.orange),
-                                          ),
-                          );
+                    ChatwheelLine chatwheel = state.lines[index];
+                    return _isAvailableNextPage(index, state)
+                        ? _centerLoading()
+                        : _listItem(chatwheel, state, index);
                   },
                 ),
               );
