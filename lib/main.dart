@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dota_2_chatwheel/injection_container.dart';
 import 'package:flutter_dota_2_chatwheel/ui/home/home_page.dart';
-import 'package:flutter_dota_2_chatwheel/ui/wheel/wheel_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
