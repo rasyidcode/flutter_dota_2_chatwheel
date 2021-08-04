@@ -6,56 +6,59 @@ part of home_event;
 // BuiltValueGenerator
 // **************************************************************************
 
-class _$HomeInitiated extends HomeInitiated {
-  factory _$HomeInitiated([void Function(HomeInitiatedBuilder)? updates]) =>
-      (new HomeInitiatedBuilder()..update(updates)).build();
+class _$ChatWheelInitiated extends ChatWheelInitiated {
+  factory _$ChatWheelInitiated(
+          [void Function(ChatWheelInitiatedBuilder)? updates]) =>
+      (new ChatWheelInitiatedBuilder()..update(updates)).build();
 
-  _$HomeInitiated._() : super._();
+  _$ChatWheelInitiated._() : super._();
 
   @override
-  HomeInitiated rebuild(void Function(HomeInitiatedBuilder) updates) =>
+  ChatWheelInitiated rebuild(
+          void Function(ChatWheelInitiatedBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  HomeInitiatedBuilder toBuilder() => new HomeInitiatedBuilder()..replace(this);
+  ChatWheelInitiatedBuilder toBuilder() =>
+      new ChatWheelInitiatedBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is HomeInitiated;
+    return other is ChatWheelInitiated;
   }
 
   @override
   int get hashCode {
-    return 769982979;
+    return 652173854;
   }
 
   @override
   String toString() {
-    return newBuiltValueToStringHelper('HomeInitiated').toString();
+    return newBuiltValueToStringHelper('ChatWheelInitiated').toString();
   }
 }
 
-class HomeInitiatedBuilder
-    implements Builder<HomeInitiated, HomeInitiatedBuilder> {
-  _$HomeInitiated? _$v;
+class ChatWheelInitiatedBuilder
+    implements Builder<ChatWheelInitiated, ChatWheelInitiatedBuilder> {
+  _$ChatWheelInitiated? _$v;
 
-  HomeInitiatedBuilder();
+  ChatWheelInitiatedBuilder();
 
   @override
-  void replace(HomeInitiated other) {
+  void replace(ChatWheelInitiated other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$HomeInitiated;
+    _$v = other as _$ChatWheelInitiated;
   }
 
   @override
-  void update(void Function(HomeInitiatedBuilder)? updates) {
+  void update(void Function(ChatWheelInitiatedBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$HomeInitiated build() {
-    final _$result = _$v ?? new _$HomeInitiated._();
+  _$ChatWheelInitiated build() {
+    final _$result = _$v ?? new _$ChatWheelInitiated._();
     replace(_$result);
     return _$result;
   }

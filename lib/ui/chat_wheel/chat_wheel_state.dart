@@ -4,9 +4,10 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 
-part 'home_state.g.dart';
+part 'chat_wheel_state.g.dart';
 
-abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
+abstract class ChatWheelState
+    implements Built<ChatWheelState, ChatWheelStateBuilder> {
   bool get isLoading;
   String get error;
   BuiltList<ChatwheelLine> get lines;
@@ -18,12 +19,12 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
 
   bool get isSuccessful => !isLoading && lines.isNotEmpty && error == '';
 
-  HomeState._();
+  ChatWheelState._();
 
-  factory HomeState([updates(HomeStateBuilder b)]) = _$HomeState;
+  factory ChatWheelState([updates(ChatWheelStateBuilder b)]) = _$ChatWheelState;
 
-  factory HomeState.initial() {
-    return HomeState((b) => b
+  factory ChatWheelState.initial() {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
@@ -33,8 +34,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isFailDownload = false);
   }
 
-  factory HomeState.loading() {
-    return HomeState((b) => b
+  factory ChatWheelState.loading() {
+    return ChatWheelState((b) => b
       ..isLoading = true
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
@@ -44,8 +45,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isFailDownload = false);
   }
 
-  factory HomeState.failure(String error) {
-    return HomeState((b) => b
+  factory ChatWheelState.failure(String error) {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = error
@@ -55,8 +56,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isFailDownload = false);
   }
 
-  factory HomeState.success(BuiltList<ChatwheelLine> lines) {
-    return HomeState((b) => b
+  factory ChatWheelState.success(BuiltList<ChatwheelLine> lines) {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(lines)
       ..error = ''
@@ -66,8 +67,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..isFailDownload = false);
   }
 
-  factory HomeState.downloading(BuiltList<ChatwheelLine> lines, int? dId) {
-    return HomeState((b) => b
+  factory ChatWheelState.downloading(BuiltList<ChatwheelLine> lines, int? dId) {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(lines)
       ..error = ''
@@ -78,8 +79,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..downloadingId = dId);
   }
 
-  factory HomeState.downloaded(BuiltList<ChatwheelLine> lines, int? dId) {
-    return HomeState((b) => b
+  factory ChatWheelState.downloaded(BuiltList<ChatwheelLine> lines, int? dId) {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(lines)
       ..error = ''
@@ -90,8 +91,9 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
       ..downloadingId = dId);
   }
 
-  factory HomeState.downloadFail(BuiltList<ChatwheelLine> lines, int? dId) {
-    return HomeState((b) => b
+  factory ChatWheelState.downloadFail(
+      BuiltList<ChatwheelLine> lines, int? dId) {
+    return ChatWheelState((b) => b
       ..isLoading = false
       ..lines.replace(lines)
       ..error = ''

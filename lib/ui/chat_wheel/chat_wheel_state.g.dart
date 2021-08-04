@@ -6,7 +6,7 @@ part of home_state;
 // BuiltValueGenerator
 // **************************************************************************
 
-class _$HomeState extends HomeState {
+class _$ChatWheelState extends ChatWheelState {
   @override
   final bool isLoading;
   @override
@@ -24,10 +24,10 @@ class _$HomeState extends HomeState {
   @override
   final int? downloadingId;
 
-  factory _$HomeState([void Function(HomeStateBuilder)? updates]) =>
-      (new HomeStateBuilder()..update(updates)).build();
+  factory _$ChatWheelState([void Function(ChatWheelStateBuilder)? updates]) =>
+      (new ChatWheelStateBuilder()..update(updates)).build();
 
-  _$HomeState._(
+  _$ChatWheelState._(
       {required this.isLoading,
       required this.error,
       required this.lines,
@@ -37,30 +37,32 @@ class _$HomeState extends HomeState {
       required this.isFailDownload,
       this.downloadingId})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(isLoading, 'HomeState', 'isLoading');
-    BuiltValueNullFieldError.checkNotNull(error, 'HomeState', 'error');
-    BuiltValueNullFieldError.checkNotNull(lines, 'HomeState', 'lines');
     BuiltValueNullFieldError.checkNotNull(
-        hasReachedEndOfResults, 'HomeState', 'hasReachedEndOfResults');
+        isLoading, 'ChatWheelState', 'isLoading');
+    BuiltValueNullFieldError.checkNotNull(error, 'ChatWheelState', 'error');
+    BuiltValueNullFieldError.checkNotNull(lines, 'ChatWheelState', 'lines');
     BuiltValueNullFieldError.checkNotNull(
-        isDownloading, 'HomeState', 'isDownloading');
+        hasReachedEndOfResults, 'ChatWheelState', 'hasReachedEndOfResults');
     BuiltValueNullFieldError.checkNotNull(
-        isDownloaded, 'HomeState', 'isDownloaded');
+        isDownloading, 'ChatWheelState', 'isDownloading');
     BuiltValueNullFieldError.checkNotNull(
-        isFailDownload, 'HomeState', 'isFailDownload');
+        isDownloaded, 'ChatWheelState', 'isDownloaded');
+    BuiltValueNullFieldError.checkNotNull(
+        isFailDownload, 'ChatWheelState', 'isFailDownload');
   }
 
   @override
-  HomeState rebuild(void Function(HomeStateBuilder) updates) =>
+  ChatWheelState rebuild(void Function(ChatWheelStateBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  HomeStateBuilder toBuilder() => new HomeStateBuilder()..replace(this);
+  ChatWheelStateBuilder toBuilder() =>
+      new ChatWheelStateBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is HomeState &&
+    return other is ChatWheelState &&
         isLoading == other.isLoading &&
         error == other.error &&
         lines == other.lines &&
@@ -89,7 +91,7 @@ class _$HomeState extends HomeState {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('HomeState')
+    return (newBuiltValueToStringHelper('ChatWheelState')
           ..add('isLoading', isLoading)
           ..add('error', error)
           ..add('lines', lines)
@@ -102,8 +104,9 @@ class _$HomeState extends HomeState {
   }
 }
 
-class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
-  _$HomeState? _$v;
+class ChatWheelStateBuilder
+    implements Builder<ChatWheelState, ChatWheelStateBuilder> {
+  _$ChatWheelState? _$v;
 
   bool? _isLoading;
   bool? get isLoading => _$this._isLoading;
@@ -142,9 +145,9 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
   set downloadingId(int? downloadingId) =>
       _$this._downloadingId = downloadingId;
 
-  HomeStateBuilder();
+  ChatWheelStateBuilder();
 
-  HomeStateBuilder get _$this {
+  ChatWheelStateBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _isLoading = $v.isLoading;
@@ -161,37 +164,37 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
   }
 
   @override
-  void replace(HomeState other) {
+  void replace(ChatWheelState other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$HomeState;
+    _$v = other as _$ChatWheelState;
   }
 
   @override
-  void update(void Function(HomeStateBuilder)? updates) {
+  void update(void Function(ChatWheelStateBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$HomeState build() {
-    _$HomeState _$result;
+  _$ChatWheelState build() {
+    _$ChatWheelState _$result;
     try {
       _$result = _$v ??
-          new _$HomeState._(
+          new _$ChatWheelState._(
               isLoading: BuiltValueNullFieldError.checkNotNull(
-                  isLoading, 'HomeState', 'isLoading'),
+                  isLoading, 'ChatWheelState', 'isLoading'),
               error: BuiltValueNullFieldError.checkNotNull(
-                  error, 'HomeState', 'error'),
+                  error, 'ChatWheelState', 'error'),
               lines: lines.build(),
               hasReachedEndOfResults: BuiltValueNullFieldError.checkNotNull(
                   hasReachedEndOfResults,
-                  'HomeState',
+                  'ChatWheelState',
                   'hasReachedEndOfResults'),
               isDownloading: BuiltValueNullFieldError.checkNotNull(
-                  isDownloading, 'HomeState', 'isDownloading'),
+                  isDownloading, 'ChatWheelState', 'isDownloading'),
               isDownloaded: BuiltValueNullFieldError.checkNotNull(
-                  isDownloaded, 'HomeState', 'isDownloaded'),
+                  isDownloaded, 'ChatWheelState', 'isDownloaded'),
               isFailDownload: BuiltValueNullFieldError.checkNotNull(
-                  isFailDownload, 'HomeState', 'isFailDownload'),
+                  isFailDownload, 'ChatWheelState', 'isFailDownload'),
               downloadingId: downloadingId);
     } catch (_) {
       late String _$failedField;
@@ -200,7 +203,7 @@ class HomeStateBuilder implements Builder<HomeState, HomeStateBuilder> {
         lines.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'HomeState', _$failedField, e.toString());
+            'ChatWheelState', _$failedField, e.toString());
       }
       rethrow;
     }

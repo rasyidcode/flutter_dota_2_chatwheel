@@ -2,9 +2,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
-import 'package:flutter_dota_2_chatwheel/ui/home/home_bloc.dart';
-import 'package:flutter_dota_2_chatwheel/ui/home/home_state.dart';
-import 'package:flutter_dota_2_chatwheel/ui/home/widgets/positioned_dot_button.dart';
+import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_bloc.dart';
+import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
+import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/widgets/positioned_dot_button.dart';
 import 'package:kiwi/kiwi.dart';
 
 enum DotPosition {
@@ -19,15 +19,15 @@ enum DotPosition {
   LEFT_CENTER,
 }
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+class ChatWheelPage extends StatefulWidget {
+  ChatWheelPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _ChatWheelPageState createState() => _ChatWheelPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final HomeBloc _homeBloc = KiwiContainer().resolve<HomeBloc>();
+class _ChatWheelPageState extends State<ChatWheelPage> {
+  final ChatWheelBloc _homeBloc = KiwiContainer().resolve<ChatWheelBloc>();
   final AudioPlayer _audioPlayer = AudioPlayer();
   final ScrollController _scrollController = ScrollController();
 
@@ -45,11 +45,11 @@ class _HomePageState extends State<HomePage> {
     _homeBloc.close();
   }
 
-  int _chatwheelItemCount(HomeState state) => state.hasReachedEndOfResults
+  int _chatwheelItemCount(ChatWheelState state) => state.hasReachedEndOfResults
       ? state.lines.length
       : state.lines.length + 1;
 
-  bool _isAvailableNextPage(int index, HomeState state) =>
+  bool _isAvailableNextPage(int index, ChatWheelState state) =>
       index >= state.lines.length && !state.hasReachedEndOfResults;
 
   void changeActiveDot(StateSetter state, DotPosition dotPosition) {
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         child: CircularProgressIndicator(),
       );
 
-  Widget _playButton(HomeState state, ChatwheelLine cl) => IconButton(
+  Widget _playButton(ChatWheelState state, ChatwheelLine cl) => IconButton(
         onPressed: () async {
           await _audioPlayer.play(cl.localPath, isLocal: true);
         },
@@ -72,10 +72,10 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  bool _isDownloading(HomeState state, ChatwheelLine cl) =>
+  bool _isDownloading(ChatWheelState state, ChatwheelLine cl) =>
       state.isDownloading && state.downloadingId == cl.id;
 
-  bool _isDownloaded(HomeState state, ChatwheelLine cl) =>
+  bool _isDownloaded(ChatWheelState state, ChatwheelLine cl) =>
       state.isDownloaded && state.downloadingId == cl.id;
 
   Widget _downloadButton(ChatwheelLine cl, int index) => IconButton(
@@ -92,11 +92,17 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  Widget _listItem(ChatwheelLine cl, HomeState state, int index) => ListTile(
+  Widget _listItem(ChatwheelLine cl, ChatWheelState state, int index) =>
+      ListTile(
         onLongPress: () {
           showDialog(context: context, builder: (_) => _buildDialog());
         },
-        title: Text(cl.line),
+        title: Text(
+          cl.line,
+          style: TextStyle(
+            fontWeight: FontWeight.w100,
+          ),
+        ),
         trailing: cl.localPath.isNotEmpty
             ? _playButton(state, cl)
             : _isDownloading(state, cl)
@@ -248,11 +254,17 @@ class _HomePageState extends State<HomePage> {
       create: (BuildContext context) => _homeBloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
+          centerTitle: true,
+          title: Text(
+            'Chat Wheel',
+            style: TextStyle(
+              fontWeight: FontWeight.w100,
+            ),
+          ),
         ),
         body: BlocBuilder(
           bloc: _homeBloc,
-          builder: (BuildContext context, HomeState state) {
+          builder: (BuildContext context, ChatWheelState state) {
             if (state.isLoading) {
               return _centerLoading();
             }

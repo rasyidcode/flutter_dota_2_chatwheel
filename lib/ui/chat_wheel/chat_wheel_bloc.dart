@@ -4,19 +4,21 @@ import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
+import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/repository/chatwheel_repository.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
-import 'package:flutter_dota_2_chatwheel/ui/home/home_event.dart';
-import 'package:flutter_dota_2_chatwheel/ui/home/home_state.dart';
+import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_event.dart';
+import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
+class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
   final ChatwheelRepository _chatwheelRepository;
   final Dio _dio;
 
-  HomeBloc(this._chatwheelRepository, this._dio) : super(HomeState.initial());
+  ChatWheelBloc(this._chatwheelRepository, this._dio)
+      : super(ChatWheelState.initial());
 
   String _downloadUrl = '';
   String _fileName = '';
@@ -24,11 +26,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   int _downloadingIndex = -1;
 
   void onHomeInit() {
-    add(HomeInitiated());
+    add(ChatWheelInitiated());
   }
 
   void fetchNextPage() {
-    add(HomeNextPage());
+    add(ChatWheelNextPage());
   }
 
   void downloadChatwheel(
@@ -40,22 +42,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _fileName = fileName;
     _downloadingId = downloadingId;
     _downloadingIndex = downloadingIndex;
-    add(HomeDownload());
+    add(ChatWheelDownload());
   }
 
   @override
-  Stream<HomeState> mapEventToState(HomeEvent event) async* {
-    if (event is HomeInitiated) {
+  Stream<ChatWheelState> mapEventToState(ChatWheelEvent event) async* {
+    if (event is ChatWheelInitiated) {
       yield* mapInitEvent();
-    } else if (event is HomeNextPage) {
+    } else if (event is ChatWheelNextPage) {
       yield* mapNextPageEvent();
-    } else if (event is HomeDownload) {
+    } else if (event is ChatWheelDownload) {
       yield* mapDownloadEvent();
     }
   }
 
-  Stream<HomeState> mapDownloadEvent() async* {
-    yield HomeState.downloading(state.lines, _downloadingId);
+  Stream<ChatWheelState> mapDownloadEvent() async* {
+    yield ChatWheelState.downloading(state.lines, _downloadingId);
     try {
       File? savedFile;
       if (await Permission.storage.isGranted) {
@@ -65,7 +67,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (permissionStatus == PermissionStatus.granted) {
           savedFile = await _handleStoragePermissionGranted();
         } else {
-          yield HomeState.downloadFail(state.lines, _downloadingId);
+          yield ChatWheelState.downloadFail(state.lines, _downloadingId);
         }
       }
 
@@ -94,12 +96,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           newLines = state.lines;
         }
 
-        yield HomeState.downloaded(newLines, _downloadingId);
+        yield ChatWheelState.downloaded(newLines, _downloadingId);
       } else {
-        yield HomeState.downloadFail(state.lines, _downloadingId);
+        yield ChatWheelState.downloadFail(state.lines, _downloadingId);
       }
     } catch (e) {
-      yield HomeState.downloadFail(state.lines, _downloadingId);
+      yield ChatWheelState.downloadFail(state.lines, _downloadingId);
     }
   }
 
@@ -127,28 +129,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> mapInitEvent() async* {
-    yield HomeState.loading();
+  Stream<ChatWheelState> mapInitEvent() async* {
+    yield ChatWheelState.loading();
     _chatwheelRepository.init();
 
     try {
       await _chatwheelRepository.storeChatwheels();
 
       final lines = await _chatwheelRepository.getLines();
-      yield HomeState.success(lines);
+      yield ChatWheelState.success(lines);
     } on NoElementFoundException catch (e) {
-      yield HomeState.failure(e.message);
+      yield ChatWheelState.failure(e.message);
     } on UnhandledException catch (e) {
-      yield HomeState.failure(e.message);
+      yield ChatWheelState.failure(e.message);
     } on EmptyResultException catch (e) {
-      yield HomeState.failure(e.message);
+      yield ChatWheelState.failure(e.message);
     }
   }
 
-  Stream<HomeState> mapNextPageEvent() async* {
+  Stream<ChatWheelState> mapNextPageEvent() async* {
     try {
       final lines = await _chatwheelRepository.getLines();
-      yield HomeState.success(state.lines + lines);
+      yield ChatWheelState.success(state.lines + lines);
     } on EmptyResultException catch (_) {
       yield state.rebuild((b) => b..hasReachedEndOfResults = true);
     }
