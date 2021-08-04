@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
+import 'package:flutter_dota_2_chatwheel/enums/chat_wheel_dot_position.dart';
 
 class ChatwheelLineProvider extends BaseProvider {
   final String _tableName = 'chatwheel_lines';
@@ -20,6 +21,7 @@ class ChatwheelLineProvider extends BaseProvider {
             ..lineTranslate = line['lineTranslate']
             ..url = line['url']
             ..showInWheel = line['showInWheel'] == 1 ? true : false
+            ..wheelPosition = _getWheelPosition(line['wheelLine'])
             ..localPath = line['localPath']
             ..createdAt = line['createdAt']
             ..updatedAt = line['updatedAt']))
@@ -44,6 +46,7 @@ class ChatwheelLineProvider extends BaseProvider {
             ..url = line['url']
             ..showInWheel = line['showInWheel'] == 1 ? true : false
             ..localPath = line['localPath']
+            ..wheelPosition = _getWheelPosition(line['wheelLine'])
             ..createdAt = line['createdAt']
             ..updatedAt = line['updatedAt']))
           .toBuiltList();
@@ -74,10 +77,11 @@ class ChatwheelLineProvider extends BaseProvider {
 
   //--------------------- update part ---------------------//
   /// Modify line's showInWheel
-  Future<bool> updateLineShowInWheel(int id, bool showInWheel) async {
+  Future<bool> updateLineShowInWheel(
+      int id, bool showInWheel, ChatWheelDotPosition dotPosition) async {
     final updateRes = await db?.rawUpdate(
-        'UPDATE $_tableName SET showInWheel = ? WHERE id = ?',
-        [showInWheel ? 1 : 0, id]);
+        'UPDATE $_tableName SET showInWheel = ? WHERE id = ? AND wheelIndex = ?',
+        [showInWheel ? 1 : 0, id, dotPosition]);
     if (updateRes != null)
       return updateRes > 0;
     else
@@ -95,4 +99,28 @@ class ChatwheelLineProvider extends BaseProvider {
   }
 
   //--------------------- delete part ---------------------//
+
+  //--------------------- private method part -------------//
+  ChatWheelDotPosition _getWheelPosition(int wheelIndex) {
+    switch (wheelIndex) {
+      case 0:
+        return ChatWheelDotPosition.topLeft;
+      case 1:
+        return ChatWheelDotPosition.topCenter;
+      case 2:
+        return ChatWheelDotPosition.topRight;
+      case 3:
+        return ChatWheelDotPosition.rightCenter;
+      case 4:
+        return ChatWheelDotPosition.bottomRight;
+      case 5:
+        return ChatWheelDotPosition.bottomCenter;
+      case 6:
+        return ChatWheelDotPosition.bottomLeft;
+      case 7:
+        return ChatWheelDotPosition.leftCenter;
+      default:
+        return ChatWheelDotPosition.none;
+    }
+  }
 }

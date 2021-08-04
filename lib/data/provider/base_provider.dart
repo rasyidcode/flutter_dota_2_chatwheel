@@ -19,6 +19,7 @@ abstract class BaseProvider {
         url text null,
         localPath text null,
         showInWheel integer,
+        whilePosition integer,
         createdAt integer,
         updatedAt integer
       )
