@@ -12,10 +12,12 @@ abstract class ChatWheelState
   String get error;
   BuiltList<ChatwheelLine> get lines;
   bool get hasReachedEndOfResults;
-  bool get isDownloading;
-  bool get isDownloaded;
-  bool get isFailDownload;
+  bool? get isDownloading;
+  bool? get isDownloaded;
+  bool? get isFailDownload;
   int? get downloadingId;
+  bool? get isUpdatingShowInLine;
+  String? get showInLineErrorMessage;
 
   bool get isSuccessful => !isLoading && lines.isNotEmpty && error == '';
 
@@ -28,10 +30,7 @@ abstract class ChatWheelState
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
-      ..hasReachedEndOfResults = false
-      ..isDownloading = false
-      ..isDownloaded = false
-      ..isFailDownload = false);
+      ..hasReachedEndOfResults = false);
   }
 
   factory ChatWheelState.loading() {
@@ -39,10 +38,7 @@ abstract class ChatWheelState
       ..isLoading = true
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = ''
-      ..hasReachedEndOfResults = false
-      ..isDownloading = false
-      ..isDownloaded = false
-      ..isFailDownload = false);
+      ..hasReachedEndOfResults = false);
   }
 
   factory ChatWheelState.failure(String error) {
@@ -50,10 +46,7 @@ abstract class ChatWheelState
       ..isLoading = false
       ..lines.replace(BuiltList<ChatwheelLine>())
       ..error = error
-      ..hasReachedEndOfResults = false
-      ..isDownloading = false
-      ..isDownloaded = false
-      ..isFailDownload = false);
+      ..hasReachedEndOfResults = false);
   }
 
   factory ChatWheelState.success(BuiltList<ChatwheelLine> lines) {
@@ -61,10 +54,7 @@ abstract class ChatWheelState
       ..isLoading = false
       ..lines.replace(lines)
       ..error = ''
-      ..hasReachedEndOfResults = false
-      ..isDownloading = false
-      ..isDownloaded = false
-      ..isFailDownload = false);
+      ..hasReachedEndOfResults = false);
   }
 
   factory ChatWheelState.downloading(BuiltList<ChatwheelLine> lines, int? dId) {
@@ -102,5 +92,23 @@ abstract class ChatWheelState
       ..isDownloaded = false
       ..isFailDownload = true
       ..downloadingId = dId);
+  }
+
+  factory ChatWheelState.showInWheelUpdating(BuiltList<ChatwheelLine> lines) {
+    return ChatWheelState((b) => b
+      ..isLoading = false
+      ..lines.replace(lines)
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..isUpdatingShowInLine = true);
+  }
+
+  factory ChatWheelState.showInWheelUpdateDone(BuiltList<ChatwheelLine> lines) {
+    return ChatWheelState((b) => b
+      ..isLoading = false
+      ..lines.replace(lines)
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..isUpdatingShowInLine = false);
   }
 }

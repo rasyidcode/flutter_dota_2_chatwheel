@@ -17,3 +17,5 @@ abstract class ChatWheelInitiated extends ChatWheelEvent
 class ChatWheelNextPage extends ChatWheelEvent {}
 
 class ChatWheelDownload extends ChatWheelEvent {}
+
+class ChatWheelUpdateShowInWheel extends ChatWheelEvent {}

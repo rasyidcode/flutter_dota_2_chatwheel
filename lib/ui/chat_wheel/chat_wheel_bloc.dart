@@ -83,7 +83,7 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
         // update downloadedId chatwheel on database
         BuiltList<ChatwheelLine> newLines = BuiltList<ChatwheelLine>();
         if (_downloadingId != null) {
-          bool isUpdated = await _chatwheelRepository.updateLine(
+          bool isUpdated = await _chatwheelRepository.setLocalPath(
               _downloadingId!, savedFile.path);
           if (isUpdated) {
             ChatwheelLine cl = state.lines[_downloadingIndex]
@@ -102,30 +102,6 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
       }
     } catch (e) {
       yield ChatWheelState.downloadFail(state.lines, _downloadingId);
-    }
-  }
-
-  Future<File?> _handleStoragePermissionGranted() async {
-    Directory? dir = await getExternalStorageDirectory();
-    String newPath = "";
-
-    List<String>? paths = dir?.path.split("/");
-    if (paths != null) {
-      for (int i = 1; i < paths.length; i++) {
-        if (paths[i] != "Android")
-          newPath += "/" + paths[i];
-        else
-          break;
-      }
-
-      newPath = newPath + "/FlutterDota2Chatwheel";
-      dir = Directory(newPath);
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
-      }
-      String savedPath = dir.path + "/$_fileName.mp3";
-      File saveFile = File(savedPath);
-      return saveFile;
     }
   }
 
@@ -153,6 +129,37 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
       yield ChatWheelState.success(state.lines + lines);
     } on EmptyResultException catch (_) {
       yield state.rebuild((b) => b..hasReachedEndOfResults = true);
+    }
+  }
+
+  Stream<ChatWheelState> mapUpdateLineShowInWheel() async* {
+    // yield
+    // try {
+    //   yield
+    // }
+  }
+
+  Future<File?> _handleStoragePermissionGranted() async {
+    Directory? dir = await getExternalStorageDirectory();
+    String newPath = "";
+
+    List<String>? paths = dir?.path.split("/");
+    if (paths != null) {
+      for (int i = 1; i < paths.length; i++) {
+        if (paths[i] != "Android")
+          newPath += "/" + paths[i];
+        else
+          break;
+      }
+
+      newPath = newPath + "/FlutterDota2Chatwheel";
+      dir = Directory(newPath);
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+      String savedPath = dir.path + "/$_fileName.mp3";
+      File saveFile = File(savedPath);
+      return saveFile;
     }
   }
 }

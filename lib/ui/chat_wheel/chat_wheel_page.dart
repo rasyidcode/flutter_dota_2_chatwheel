@@ -73,10 +73,14 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
       );
 
   bool _isDownloading(ChatWheelState state, ChatwheelLine cl) =>
-      state.isDownloading && state.downloadingId == cl.id;
+      state.isDownloading != null &&
+      state.isDownloading! &&
+      state.downloadingId == cl.id;
 
   bool _isDownloaded(ChatWheelState state, ChatwheelLine cl) =>
-      state.isDownloaded && state.downloadingId == cl.id;
+      state.isDownloaded != null &&
+      state.isDownloaded! &&
+      state.downloadingId == cl.id;
 
   Widget _downloadButton(ChatwheelLine cl, int index) => IconButton(
         onPressed: () {
@@ -94,7 +98,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
 
   Widget _listItem(ChatwheelLine cl, ChatWheelState state, int index) =>
       ListTile(
-        onLongPress: () {
+        onTap: () {
           showDialog(context: context, builder: (_) => _buildDialog());
         },
         title: Text(

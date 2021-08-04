@@ -14,7 +14,6 @@ class ChatwheelRepository {
 
   // init database
   void init() async {
-    // open database connection
     await (_provider as ChatwheelLineProvider).open();
   }
 
@@ -69,9 +68,18 @@ class ChatwheelRepository {
     return lines;
   }
 
-  Future<bool> updateLine(int id, String localPath) async {
-    final isUpdated =
-        await (_provider as ChatwheelLineProvider).updateLine(id, localPath);
+  // Set line's local path
+  Future<bool> setLocalPath(int id, String localPath) async {
+    final isUpdated = await (_provider as ChatwheelLineProvider)
+        .updateLineLocalPath(id, localPath);
+
+    return isUpdated;
+  }
+
+  // Update line show in wheel
+  Future<bool> updateShowInWheel(int id, bool showInWheel) async {
+    final isUpdated = await (_provider as ChatwheelLineProvider)
+        .updateLineShowInWheel(id, showInWheel);
 
     return isUpdated;
   }

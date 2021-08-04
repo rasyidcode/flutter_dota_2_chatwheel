@@ -16,13 +16,17 @@ class _$ChatWheelState extends ChatWheelState {
   @override
   final bool hasReachedEndOfResults;
   @override
-  final bool isDownloading;
+  final bool? isDownloading;
   @override
-  final bool isDownloaded;
+  final bool? isDownloaded;
   @override
-  final bool isFailDownload;
+  final bool? isFailDownload;
   @override
   final int? downloadingId;
+  @override
+  final bool? isUpdatingShowInLine;
+  @override
+  final String? showInLineErrorMessage;
 
   factory _$ChatWheelState([void Function(ChatWheelStateBuilder)? updates]) =>
       (new ChatWheelStateBuilder()..update(updates)).build();
@@ -32,10 +36,12 @@ class _$ChatWheelState extends ChatWheelState {
       required this.error,
       required this.lines,
       required this.hasReachedEndOfResults,
-      required this.isDownloading,
-      required this.isDownloaded,
-      required this.isFailDownload,
-      this.downloadingId})
+      this.isDownloading,
+      this.isDownloaded,
+      this.isFailDownload,
+      this.downloadingId,
+      this.isUpdatingShowInLine,
+      this.showInLineErrorMessage})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         isLoading, 'ChatWheelState', 'isLoading');
@@ -43,12 +49,6 @@ class _$ChatWheelState extends ChatWheelState {
     BuiltValueNullFieldError.checkNotNull(lines, 'ChatWheelState', 'lines');
     BuiltValueNullFieldError.checkNotNull(
         hasReachedEndOfResults, 'ChatWheelState', 'hasReachedEndOfResults');
-    BuiltValueNullFieldError.checkNotNull(
-        isDownloading, 'ChatWheelState', 'isDownloading');
-    BuiltValueNullFieldError.checkNotNull(
-        isDownloaded, 'ChatWheelState', 'isDownloaded');
-    BuiltValueNullFieldError.checkNotNull(
-        isFailDownload, 'ChatWheelState', 'isFailDownload');
   }
 
   @override
@@ -70,7 +70,9 @@ class _$ChatWheelState extends ChatWheelState {
         isDownloading == other.isDownloading &&
         isDownloaded == other.isDownloaded &&
         isFailDownload == other.isFailDownload &&
-        downloadingId == other.downloadingId;
+        downloadingId == other.downloadingId &&
+        isUpdatingShowInLine == other.isUpdatingShowInLine &&
+        showInLineErrorMessage == other.showInLineErrorMessage;
   }
 
   @override
@@ -80,13 +82,19 @@ class _$ChatWheelState extends ChatWheelState {
             $jc(
                 $jc(
                     $jc(
-                        $jc($jc($jc(0, isLoading.hashCode), error.hashCode),
-                            lines.hashCode),
-                        hasReachedEndOfResults.hashCode),
-                    isDownloading.hashCode),
-                isDownloaded.hashCode),
-            isFailDownload.hashCode),
-        downloadingId.hashCode));
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc($jc(0, isLoading.hashCode),
+                                        error.hashCode),
+                                    lines.hashCode),
+                                hasReachedEndOfResults.hashCode),
+                            isDownloading.hashCode),
+                        isDownloaded.hashCode),
+                    isFailDownload.hashCode),
+                downloadingId.hashCode),
+            isUpdatingShowInLine.hashCode),
+        showInLineErrorMessage.hashCode));
   }
 
   @override
@@ -99,7 +107,9 @@ class _$ChatWheelState extends ChatWheelState {
           ..add('isDownloading', isDownloading)
           ..add('isDownloaded', isDownloaded)
           ..add('isFailDownload', isFailDownload)
-          ..add('downloadingId', downloadingId))
+          ..add('downloadingId', downloadingId)
+          ..add('isUpdatingShowInLine', isUpdatingShowInLine)
+          ..add('showInLineErrorMessage', showInLineErrorMessage))
         .toString();
   }
 }
@@ -145,6 +155,16 @@ class ChatWheelStateBuilder
   set downloadingId(int? downloadingId) =>
       _$this._downloadingId = downloadingId;
 
+  bool? _isUpdatingShowInLine;
+  bool? get isUpdatingShowInLine => _$this._isUpdatingShowInLine;
+  set isUpdatingShowInLine(bool? isUpdatingShowInLine) =>
+      _$this._isUpdatingShowInLine = isUpdatingShowInLine;
+
+  String? _showInLineErrorMessage;
+  String? get showInLineErrorMessage => _$this._showInLineErrorMessage;
+  set showInLineErrorMessage(String? showInLineErrorMessage) =>
+      _$this._showInLineErrorMessage = showInLineErrorMessage;
+
   ChatWheelStateBuilder();
 
   ChatWheelStateBuilder get _$this {
@@ -158,6 +178,8 @@ class ChatWheelStateBuilder
       _isDownloaded = $v.isDownloaded;
       _isFailDownload = $v.isFailDownload;
       _downloadingId = $v.downloadingId;
+      _isUpdatingShowInLine = $v.isUpdatingShowInLine;
+      _showInLineErrorMessage = $v.showInLineErrorMessage;
       _$v = null;
     }
     return this;
@@ -189,13 +211,12 @@ class ChatWheelStateBuilder
                   hasReachedEndOfResults,
                   'ChatWheelState',
                   'hasReachedEndOfResults'),
-              isDownloading: BuiltValueNullFieldError.checkNotNull(
-                  isDownloading, 'ChatWheelState', 'isDownloading'),
-              isDownloaded: BuiltValueNullFieldError.checkNotNull(
-                  isDownloaded, 'ChatWheelState', 'isDownloaded'),
-              isFailDownload: BuiltValueNullFieldError.checkNotNull(
-                  isFailDownload, 'ChatWheelState', 'isFailDownload'),
-              downloadingId: downloadingId);
+              isDownloading: isDownloading,
+              isDownloaded: isDownloaded,
+              isFailDownload: isFailDownload,
+              downloadingId: downloadingId,
+              isUpdatingShowInLine: isUpdatingShowInLine,
+              showInLineErrorMessage: showInLineErrorMessage);
     } catch (_) {
       late String _$failedField;
       try {
