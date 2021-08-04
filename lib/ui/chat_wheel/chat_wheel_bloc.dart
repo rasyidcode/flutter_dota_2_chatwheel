@@ -133,10 +133,9 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
   }
 
   Stream<ChatWheelState> mapUpdateLineShowInWheel() async* {
-    // yield
-    // try {
-    //   yield
-    // }
+    yield ChatWheelState.showInWheelUpdating(state.lines);
+
+    try {} catch (_) {}
   }
 
   Future<File?> _handleStoragePermissionGranted() async {
