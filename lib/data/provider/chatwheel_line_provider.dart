@@ -1,7 +1,8 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
-import 'package:flutter_dota_2_chatwheel/enums/chat_wheel_dot_position.dart';
+import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
+import 'package:flutter_dota_2_chatwheel/extensions/int_extensions.dart';
 
 class ChatwheelLineProvider extends BaseProvider {
   final String _tableName = 'chatwheel_lines';
@@ -13,18 +14,22 @@ class ChatwheelLineProvider extends BaseProvider {
         await db?.rawQuery('SELECT * FROM $_tableName LIMIT $offset,$limit');
     if (mapLines != null) {
       return mapLines
-          .map((line) => ChatwheelLine((b) => b
-            ..id = line['id']
-            ..eventName = line['eventName']
-            ..packName = line['packName']
-            ..line = line['line']
-            ..lineTranslate = line['lineTranslate']
-            ..url = line['url']
-            ..showInWheel = line['showInWheel'] == 1 ? true : false
-            ..wheelPosition = _getWheelPosition(line['wheelLine'])
-            ..localPath = line['localPath']
-            ..createdAt = line['createdAt']
-            ..updatedAt = line['updatedAt']))
+          .map(
+            (line) => ChatwheelLine(
+              (b) => b
+                ..id = (line['id'] as int)
+                ..eventName = (line['eventName'] as String)
+                ..packName = (line['packName'] as String)
+                ..line = (line['line'] as String)
+                ..lineTranslate = (line['lineTranslate'] as String)
+                ..url = (line['url'] as String)
+                ..showInWheel = (line['showInWheel'] as int) == 1 ? true : false
+                ..wheelPos = (line['wheelPos'] as int).toWheelDotPosition()
+                ..localPath = (line['localPath'] as String)
+                ..createdAt = (line['createdAt'] as int)
+                ..updatedAt = (line['updatedAt'] as int),
+            ),
+          )
           .toBuiltList();
     } else {
       return null;
@@ -37,18 +42,22 @@ class ChatwheelLineProvider extends BaseProvider {
         await db?.rawQuery('SELECT * FROM $_tableName WHERE showInWheel = 1');
     if (wheelLines != null) {
       return wheelLines
-          .map((line) => ChatwheelLine((b) => b
-            ..id = line['id']
-            ..eventName = line['eventName']
-            ..packName = line['packName']
-            ..line = line['line']
-            ..lineTranslate = line['lineTranslate']
-            ..url = line['url']
-            ..showInWheel = line['showInWheel'] == 1 ? true : false
-            ..localPath = line['localPath']
-            ..wheelPosition = _getWheelPosition(line['wheelLine'])
-            ..createdAt = line['createdAt']
-            ..updatedAt = line['updatedAt']))
+          .map(
+            (line) => ChatwheelLine(
+              (b) => b
+                ..id = (line['id'] as int)
+                ..eventName = (line['eventName'] as String)
+                ..packName = (line['packName'] as String)
+                ..line = (line['line'] as String)
+                ..lineTranslate = (line['lineTranslate'] as String)
+                ..url = (line['url'] as String)
+                ..showInWheel = (line['showInWheel'] as int) == 1 ? true : false
+                ..localPath = (line['localPath'] as String)
+                ..wheelPos = (line['wheelPos'] as int).toWheelDotPosition()
+                ..createdAt = (line['createdAt'] as int)
+                ..updatedAt = (line['updatedAt'] as int),
+            ),
+          )
           .toBuiltList();
     } else {
       return null;
@@ -78,7 +87,7 @@ class ChatwheelLineProvider extends BaseProvider {
   //--------------------- update part ---------------------//
   /// Modify line's showInWheel
   Future<bool> updateLineShowInWheel(
-      int id, bool showInWheel, ChatWheelDotPosition dotPosition) async {
+      int id, bool showInWheel, WheelPosition dotPosition) async {
     final updateRes = await db?.rawUpdate(
         'UPDATE $_tableName SET showInWheel = ? WHERE id = ? AND wheelIndex = ?',
         [showInWheel ? 1 : 0, id, dotPosition]);
@@ -101,26 +110,4 @@ class ChatwheelLineProvider extends BaseProvider {
   //--------------------- delete part ---------------------//
 
   //--------------------- private method part -------------//
-  ChatWheelDotPosition _getWheelPosition(int wheelIndex) {
-    switch (wheelIndex) {
-      case 0:
-        return ChatWheelDotPosition.topLeft;
-      case 1:
-        return ChatWheelDotPosition.topCenter;
-      case 2:
-        return ChatWheelDotPosition.topRight;
-      case 3:
-        return ChatWheelDotPosition.rightCenter;
-      case 4:
-        return ChatWheelDotPosition.bottomRight;
-      case 5:
-        return ChatWheelDotPosition.bottomCenter;
-      case 6:
-        return ChatWheelDotPosition.bottomLeft;
-      case 7:
-        return ChatWheelDotPosition.leftCenter;
-      default:
-        return ChatWheelDotPosition.none;
-    }
-  }
 }

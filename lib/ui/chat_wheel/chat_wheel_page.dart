@@ -2,7 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
-import 'package:flutter_dota_2_chatwheel/enums/chat_wheel_dot_position.dart';
+import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/widgets/positioned_dot_button.dart';
@@ -20,7 +20,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final ScrollController _scrollController = ScrollController();
 
-  ChatWheelDotPosition _currentActiveDot = ChatWheelDotPosition.none;
+  WheelPosition _currentActiveDot = WheelPosition.none;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
   bool _isAvailableNextPage(int index, ChatWheelState state) =>
       index >= state.lines.length && !state.hasReachedEndOfResults;
 
-  void changeActiveDot(StateSetter state, ChatWheelDotPosition dotPosition) {
+  void changeActiveDot(StateSetter state, WheelPosition dotPosition) {
     state(() {
       _currentActiveDot = dotPosition;
     });
@@ -107,67 +107,66 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
 
   List<Widget> _buildPositionedDotButtonList(StateSetter state) => [
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.topLeft),
+          onTap: () => changeActiveDot(state, WheelPosition.topLeft),
           top: 0,
           left: 50,
-          color: _currentActiveDot == ChatWheelDotPosition.topLeft
+          color: _currentActiveDot == WheelPosition.topLeft
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.topCenter),
+          onTap: () => changeActiveDot(state, WheelPosition.topCenter),
           top: 0,
           right: 100.0 - 5.0,
-          color: _currentActiveDot == ChatWheelDotPosition.topCenter
+          color: _currentActiveDot == WheelPosition.topCenter
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.topRight),
+          onTap: () => changeActiveDot(state, WheelPosition.topRight),
           top: 0,
           right: 50,
-          color: _currentActiveDot == ChatWheelDotPosition.topRight
+          color: _currentActiveDot == WheelPosition.topRight
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.bottomRight),
+          onTap: () => changeActiveDot(state, WheelPosition.bottomRight),
           bottom: 0,
           right: 50.0,
-          color: _currentActiveDot == ChatWheelDotPosition.bottomRight
+          color: _currentActiveDot == WheelPosition.bottomRight
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.bottomLeft),
+          onTap: () => changeActiveDot(state, WheelPosition.bottomLeft),
           bottom: 0,
           left: 50.0,
-          color: _currentActiveDot == ChatWheelDotPosition.bottomLeft
+          color: _currentActiveDot == WheelPosition.bottomLeft
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () =>
-              changeActiveDot(state, ChatWheelDotPosition.bottomCenter),
+          onTap: () => changeActiveDot(state, WheelPosition.bottomCenter),
           bottom: 0,
           left: 100.0 - 5.0,
-          color: _currentActiveDot == ChatWheelDotPosition.bottomCenter
+          color: _currentActiveDot == WheelPosition.bottomCenter
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.rightCenter),
+          onTap: () => changeActiveDot(state, WheelPosition.rightCenter),
           bottom: 45 - 8,
           right: 50,
-          color: _currentActiveDot == ChatWheelDotPosition.rightCenter
+          color: _currentActiveDot == WheelPosition.rightCenter
               ? Colors.red
               : Colors.white54,
         ),
         PositionedDotButton(
-          onTap: () => changeActiveDot(state, ChatWheelDotPosition.leftCenter),
+          onTap: () => changeActiveDot(state, WheelPosition.leftCenter),
           bottom: 45 - 8,
           left: 50,
-          color: _currentActiveDot == ChatWheelDotPosition.leftCenter
+          color: _currentActiveDot == WheelPosition.leftCenter
               ? Colors.red
               : Colors.white54,
         )
@@ -233,7 +232,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
               ),
             ),
             onPressed: () {
-              changeActiveDot(dialogState, ChatWheelDotPosition.none);
+              changeActiveDot(dialogState, WheelPosition.none);
               Navigator.of(context).pop();
             },
           ),

@@ -4,10 +4,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
-import 'package:flutter_dota_2_chatwheel/data/model/network/chatwheel_event.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/repository/chatwheel_repository.dart';
-import 'package:flutter_dota_2_chatwheel/enums/chat_wheel_dot_position.dart';
+import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_event.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
@@ -28,7 +27,7 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
 
   int _showInWheelLineIndex = -1;
   bool _showInWheel = false;
-  ChatWheelDotPosition _dotPosition = ChatWheelDotPosition.none;
+  WheelPosition _dotPosition = WheelPosition.none;
 
   void onHomeInit() {
     add(ChatWheelInitiated());
@@ -53,7 +52,7 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
   void updateDotChatwheel(
       {required int id,
       required bool showInWheel,
-      required ChatWheelDotPosition dotPosition}) {
+      required WheelPosition dotPosition}) {
     _showInWheelLineIndex = id;
     _showInWheel = showInWheel;
     _dotPosition = dotPosition;

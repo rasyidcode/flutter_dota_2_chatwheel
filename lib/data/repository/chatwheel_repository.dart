@@ -3,7 +3,7 @@ import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart';
-import 'package:flutter_dota_2_chatwheel/enums/chat_wheel_dot_position.dart';
+import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 
 class ChatwheelRepository {
   final ChatwheelDataSource _chatwheelDataSource;
@@ -41,6 +41,7 @@ class ChatwheelRepository {
                 ..url = line.url
                 ..localPath = ''
                 ..showInWheel = false
+                ..wheelPos = WheelPosition.none
                 ..createdAt = currentTime
                 ..updatedAt = currentTime);
               localLines.add(localLine);
@@ -79,7 +80,7 @@ class ChatwheelRepository {
 
   // Update line show in wheel
   Future<bool> updateShowInWheel(
-      int id, bool showInWheel, ChatWheelDotPosition dotPosition) async {
+      int id, bool showInWheel, WheelPosition dotPosition) async {
     final isUpdated = await (_provider as ChatwheelLineProvider)
         .updateLineShowInWheel(id, showInWheel, dotPosition);
 

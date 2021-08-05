@@ -44,9 +44,9 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
       'showInWheel',
       serializers.serialize(object.showInWheel,
           specifiedType: const FullType(bool)),
-      'wheelPosition',
-      serializers.serialize(object.wheelPosition,
-          specifiedType: const FullType(ChatWheelDotPosition)),
+      'wheelPos',
+      serializers.serialize(object.wheelPos,
+          specifiedType: const FullType(WheelPosition)),
     ];
     Object? value;
     value = object.id;
@@ -110,10 +110,9 @@ class _$ChatwheelLineSerializer implements StructuredSerializer<ChatwheelLine> {
           result.showInWheel = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
-        case 'wheelPosition':
-          result.wheelPosition = serializers.deserialize(value,
-                  specifiedType: const FullType(ChatWheelDotPosition))
-              as ChatWheelDotPosition;
+        case 'wheelPos':
+          result.wheelPos = serializers.deserialize(value,
+              specifiedType: const FullType(WheelPosition)) as WheelPosition;
           break;
       }
     }
@@ -144,7 +143,7 @@ class _$ChatwheelLine extends ChatwheelLine {
   @override
   final bool showInWheel;
   @override
-  final ChatWheelDotPosition wheelPosition;
+  final WheelPosition wheelPos;
 
   factory _$ChatwheelLine([void Function(ChatwheelLineBuilder)? updates]) =>
       (new ChatwheelLineBuilder()..update(updates)).build();
@@ -160,7 +159,7 @@ class _$ChatwheelLine extends ChatwheelLine {
       required this.createdAt,
       required this.updatedAt,
       required this.showInWheel,
-      required this.wheelPosition})
+      required this.wheelPos})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         eventName, 'ChatwheelLine', 'eventName');
@@ -179,7 +178,7 @@ class _$ChatwheelLine extends ChatwheelLine {
     BuiltValueNullFieldError.checkNotNull(
         showInWheel, 'ChatwheelLine', 'showInWheel');
     BuiltValueNullFieldError.checkNotNull(
-        wheelPosition, 'ChatwheelLine', 'wheelPosition');
+        wheelPos, 'ChatwheelLine', 'wheelPos');
   }
 
   @override
@@ -203,7 +202,7 @@ class _$ChatwheelLine extends ChatwheelLine {
         createdAt == other.createdAt &&
         updatedAt == other.updatedAt &&
         showInWheel == other.showInWheel &&
-        wheelPosition == other.wheelPosition;
+        wheelPos == other.wheelPos;
   }
 
   @override
@@ -227,7 +226,7 @@ class _$ChatwheelLine extends ChatwheelLine {
                     createdAt.hashCode),
                 updatedAt.hashCode),
             showInWheel.hashCode),
-        wheelPosition.hashCode));
+        wheelPos.hashCode));
   }
 
   @override
@@ -243,7 +242,7 @@ class _$ChatwheelLine extends ChatwheelLine {
           ..add('createdAt', createdAt)
           ..add('updatedAt', updatedAt)
           ..add('showInWheel', showInWheel)
-          ..add('wheelPosition', wheelPosition))
+          ..add('wheelPos', wheelPos))
         .toString();
   }
 }
@@ -293,10 +292,9 @@ class ChatwheelLineBuilder
   bool? get showInWheel => _$this._showInWheel;
   set showInWheel(bool? showInWheel) => _$this._showInWheel = showInWheel;
 
-  ChatWheelDotPosition? _wheelPosition;
-  ChatWheelDotPosition? get wheelPosition => _$this._wheelPosition;
-  set wheelPosition(ChatWheelDotPosition? wheelPosition) =>
-      _$this._wheelPosition = wheelPosition;
+  WheelPosition? _wheelPos;
+  WheelPosition? get wheelPos => _$this._wheelPos;
+  set wheelPos(WheelPosition? wheelPos) => _$this._wheelPos = wheelPos;
 
   ChatwheelLineBuilder();
 
@@ -313,7 +311,7 @@ class ChatwheelLineBuilder
       _createdAt = $v.createdAt;
       _updatedAt = $v.updatedAt;
       _showInWheel = $v.showInWheel;
-      _wheelPosition = $v.wheelPosition;
+      _wheelPos = $v.wheelPos;
       _$v = null;
     }
     return this;
@@ -353,8 +351,8 @@ class ChatwheelLineBuilder
                 updatedAt, 'ChatwheelLine', 'updatedAt'),
             showInWheel: BuiltValueNullFieldError.checkNotNull(
                 showInWheel, 'ChatwheelLine', 'showInWheel'),
-            wheelPosition:
-                BuiltValueNullFieldError.checkNotNull(wheelPosition, 'ChatwheelLine', 'wheelPosition'));
+            wheelPos:
+                BuiltValueNullFieldError.checkNotNull(wheelPos, 'ChatwheelLine', 'wheelPos'));
     replace(_$result);
     return _$result;
   }

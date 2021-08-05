@@ -1,29 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'chat_wheel_dot_position.dart';
+part of 'wheel_position.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
 // **************************************************************************
 
-const ChatWheelDotPosition _$topLeft = const ChatWheelDotPosition._('topLeft');
-const ChatWheelDotPosition _$topCenter =
-    const ChatWheelDotPosition._('topCenter');
-const ChatWheelDotPosition _$topRight =
-    const ChatWheelDotPosition._('topRight');
-const ChatWheelDotPosition _$rightCenter =
-    const ChatWheelDotPosition._('rightCenter');
-const ChatWheelDotPosition _$bottomRight =
-    const ChatWheelDotPosition._('bottomRight');
-const ChatWheelDotPosition _$bottomCenter =
-    const ChatWheelDotPosition._('bottomCenter');
-const ChatWheelDotPosition _$bottomLeft =
-    const ChatWheelDotPosition._('bottomLeft');
-const ChatWheelDotPosition _$leftCenter =
-    const ChatWheelDotPosition._('leftCenter');
-const ChatWheelDotPosition _$none = const ChatWheelDotPosition._('none');
+const WheelPosition _$topLeft = const WheelPosition._('topLeft');
+const WheelPosition _$topCenter = const WheelPosition._('topCenter');
+const WheelPosition _$topRight = const WheelPosition._('topRight');
+const WheelPosition _$rightCenter = const WheelPosition._('rightCenter');
+const WheelPosition _$bottomRight = const WheelPosition._('bottomRight');
+const WheelPosition _$bottomCenter = const WheelPosition._('bottomCenter');
+const WheelPosition _$bottomLeft = const WheelPosition._('bottomLeft');
+const WheelPosition _$leftCenter = const WheelPosition._('leftCenter');
+const WheelPosition _$none = const WheelPosition._('none');
 
-ChatWheelDotPosition _$valueOf(String name) {
+WheelPosition _$valueOf(String name) {
   switch (name) {
     case 'topLeft':
       return _$topLeft;
@@ -48,8 +41,8 @@ ChatWheelDotPosition _$valueOf(String name) {
   }
 }
 
-final BuiltSet<ChatWheelDotPosition> _$values =
-    new BuiltSet<ChatWheelDotPosition>(const <ChatWheelDotPosition>[
+final BuiltSet<WheelPosition> _$values =
+    new BuiltSet<WheelPosition>(const <WheelPosition>[
   _$topLeft,
   _$topCenter,
   _$topRight,
