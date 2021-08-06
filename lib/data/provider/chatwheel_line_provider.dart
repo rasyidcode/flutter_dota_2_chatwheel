@@ -3,6 +3,7 @@ import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
 import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/int_extensions.dart';
+import 'package:flutter_dota_2_chatwheel/extensions/wheel_position_extensions.dart';
 
 class ChatwheelLineProvider extends BaseProvider {
   final String _tableName = 'chatwheel_lines';
@@ -89,8 +90,8 @@ class ChatwheelLineProvider extends BaseProvider {
   Future<bool> updateLineShowInWheel(
       int id, bool showInWheel, WheelPosition dotPosition) async {
     final updateRes = await db?.rawUpdate(
-        'UPDATE $_tableName SET showInWheel = ? WHERE id = ? AND wheelIndex = ?',
-        [showInWheel ? 1 : 0, id, dotPosition]);
+        'UPDATE $_tableName SET showInWheel = ? WHERE id = ? AND wheelPos = ?',
+        [showInWheel ? 1 : 0, id, dotPosition.toWheelDotIndex()]);
     if (updateRes != null)
       return updateRes > 0;
     else

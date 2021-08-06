@@ -83,9 +83,15 @@ class ChatwheelRepository {
       int id, bool showInWheel, WheelPosition dotPosition) async {
     final isUpdated = await (_provider as ChatwheelLineProvider)
         .updateLineShowInWheel(id, showInWheel, dotPosition);
-
+    if (!isUpdated) throw new ShowInWheelUpdateException('Updated fail');
     return isUpdated;
   }
+}
+
+class ShowInWheelUpdateException implements Exception {
+  final String message;
+
+  ShowInWheelUpdateException(this.message);
 }
 
 class EmptyResultException implements Exception {

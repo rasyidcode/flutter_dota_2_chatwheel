@@ -67,6 +67,8 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
       yield* mapNextPageEvent();
     } else if (event is ChatWheelDownload) {
       yield* mapDownloadEvent();
+    } else if (event is ChatWheelUpdateShowInWheel) {
+      yield* mapUpdateLineShowInWheel();
     }
   }
 
@@ -150,9 +152,15 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
     yield ChatWheelState.showInWheelUpdating(state.lines);
 
     try {
-      final isUpdated = _chatwheelRepository.updateShowInWheel(
+      _chatwheelRepository.updateShowInWheel(
           _showInWheelLineIndex, _showInWheel, _dotPosition);
-    } catch (_) {}
+      yield ChatWheelState.showInWheelUpdateDone(state.lines);
+    } on ShowInWheelUpdateException catch (e) {
+      yield ChatWheelState.showInWheelUpdateError(state.lines, e.message);
+    } catch (_) {
+      yield ChatWheelState.showInWheelUpdateError(
+          state.lines, 'Something wrong occured');
+    }
   }
 
   Future<File?> _handleStoragePermissionGranted() async {

@@ -100,7 +100,8 @@ abstract class ChatWheelState
       ..lines.replace(lines)
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..isUpdatingShowInLine = true);
+      ..isUpdatingShowInLine = true
+      ..showInLineErrorMessage = '');
   }
 
   factory ChatWheelState.showInWheelUpdateDone(BuiltList<ChatwheelLine> lines) {
@@ -109,6 +110,18 @@ abstract class ChatWheelState
       ..lines.replace(lines)
       ..error = ''
       ..hasReachedEndOfResults = false
-      ..isUpdatingShowInLine = false);
+      ..isUpdatingShowInLine = false
+      ..showInLineErrorMessage = '');
+  }
+
+  factory ChatWheelState.showInWheelUpdateError(
+      BuiltList<ChatwheelLine> lines, String error) {
+    return ChatWheelState((b) => b
+      ..isLoading = false
+      ..lines.replace(lines)
+      ..error = ''
+      ..hasReachedEndOfResults = false
+      ..isUpdatingShowInLine = false
+      ..showInLineErrorMessage = error);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 
-extension WheelDotPositionExtensions on WheelPosition {
+extension WheelPositionExtensions on WheelPosition {
   int toWheelDotIndex() {
     switch (this) {
       case WheelPosition.topLeft:

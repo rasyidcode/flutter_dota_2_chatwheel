@@ -6,6 +6,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:flutter_dota_2_chatwheel/data/model/serializers/serializers.dart';
 import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
+import 'package:flutter_dota_2_chatwheel/extensions/wheel_position_extensions.dart';
 
 part 'chatwheel_line.g.dart';
 
@@ -47,7 +48,7 @@ abstract class ChatwheelLine
       'localPath': localPath,
       'createdAt': createdAt,
       'showInWheel': showInWheel ? 1 : 0,
-      'wheelPos': wheelPos,
+      'wheelPos': wheelPos.toWheelDotIndex(),
       'updatedAt': updatedAt,
     };
     return map;

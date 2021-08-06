@@ -88,7 +88,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
   Widget _listItem(ChatwheelLine cl, ChatWheelState state, int index) =>
       ListTile(
         onTap: () {
-          showDialog(context: context, builder: (_) => _buildDialog());
+          showDialog(context: context, builder: (_) => _buildDialog(cl.id));
         },
         title: Text(
           cl.line,
@@ -172,7 +172,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
         )
       ];
 
-  Widget _buildDialog() {
+  Widget _buildDialog(int? lineId) {
     return StatefulBuilder(builder: (_, StateSetter dialogState) {
       return AlertDialog(
         title: Text(
@@ -209,7 +209,14 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
               borderRadius: BorderRadius.circular(50.0),
             ),
             onPressed: () {
-              print('confirmed');
+              if (lineId != null) {
+                _homeBloc.updateDotChatwheel(
+                  id: lineId,
+                  showInWheel: true,
+                  dotPosition: _currentActiveDot,
+                );
+              }
+              Navigator.of(context).pop();
             },
             child: Text(
               'Confirm',
@@ -263,30 +270,41 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
             }
 
             if (state.isSuccessful) {
-              return NotificationListener(
-                onNotification: (ScrollNotification scrollNotification) {
-                  if (scrollNotification is ScrollEndNotification &&
-                      _scrollController.position.extentAfter == 0) {
-                    _homeBloc.fetchNextPage();
-                  }
-                  return false;
-                },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: _chatwheelItemCount(state),
-                  itemBuilder: (BuildContext context, int index) {
-                    ChatwheelLine? chatwheel;
-                    try {
-                      chatwheel = state.lines[index];
-                    } on RangeError catch (_) {
-                      chatwheel = null;
+              return Stack(children: [
+                NotificationListener(
+                  onNotification: (ScrollNotification scrollNotification) {
+                    if (scrollNotification is ScrollEndNotification &&
+                        _scrollController.position.extentAfter == 0) {
+                      _homeBloc.fetchNextPage();
                     }
-                    return _isAvailableNextPage(index, state)
-                        ? _centerLoading()
-                        : _listItem(chatwheel!, state, index);
+                    return false;
                   },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _chatwheelItemCount(state),
+                    itemBuilder: (BuildContext context, int index) {
+                      ChatwheelLine? chatwheel;
+                      try {
+                        chatwheel = state.lines[index];
+                      } on RangeError catch (_) {
+                        chatwheel = null;
+                      }
+                      return _isAvailableNextPage(index, state)
+                          ? _centerLoading()
+                          : _listItem(chatwheel!, state, index);
+                    },
+                  ),
                 ),
-              );
+                state.isUpdatingShowInLine != null &&
+                        state.isUpdatingShowInLine!
+                    ? Container(
+                        color: Colors.black87,
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container()
+              ]);
             } else {
               return Center(
                 child: Text(state.error),
