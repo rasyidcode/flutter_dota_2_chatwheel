@@ -19,3 +19,5 @@ class ChatWheelNextPage extends ChatWheelEvent {}
 class ChatWheelDownload extends ChatWheelEvent {}
 
 class ChatWheelUpdateShowInWheel extends ChatWheelEvent {}
+
+class ChatWheelUpdateLocalPath extends ChatWheelEvent {}

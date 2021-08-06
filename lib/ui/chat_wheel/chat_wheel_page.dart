@@ -6,6 +6,7 @@ import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_bloc.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/widgets/positioned_dot_button.dart';
+import 'package:flutter_dota_2_chatwheel/extensions/string_extensions.dart';
 import 'package:kiwi/kiwi.dart';
 
 class ChatWheelPage extends StatefulWidget {
@@ -45,6 +46,18 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
     state(() {
       _currentActiveDot = dotPosition;
     });
+  }
+
+  // case -> localPath not empty in the line, but file doesn't exist
+  // if this case happend we need to warn the user to download it again
+  Future<bool> isFileExist(int id, String localPath) async {
+    bool fileExist = await localPath.isFileExist();
+    if (!fileExist) {
+      _homeBloc.updateLocalPath(id, '');
+      return false;
+    }
+
+    return true;
   }
 
   Widget _centerLoading() => Center(
@@ -87,23 +100,49 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
 
   Widget _listItem(ChatwheelLine cl, ChatWheelState state, int index) =>
       ListTile(
-        onTap: () {
-          showDialog(context: context, builder: (_) => _buildDialog(cl.id));
-        },
-        title: Text(
-          cl.line,
-          style: TextStyle(
-            fontWeight: FontWeight.w100,
+          onTap: () {
+            // TODO: check file is exist or not, if file exist show dialog else show warning dialog
+            showDialog(
+                context: context, builder: (_) => _buildDialog(cl.id, state));
+          },
+          title: Text(
+            cl.line,
+            style: TextStyle(
+              fontWeight: FontWeight.w100,
+            ),
           ),
-        ),
-        trailing: cl.localPath.isNotEmpty
-            ? _playButton(state, cl)
-            : _isDownloading(state, cl)
-                ? CircularProgressIndicator()
-                : _isDownloaded(state, cl)
-                    ? _playButton(state, cl)
-                    : _downloadButton(cl, index),
-      );
+          trailing: cl.localPath.isNotEmpty
+              ? FutureBuilder(
+                  future: isFileExist(cl.id!, cl.localPath),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.hasError) {
+                      return Icon(Icons.close, color: Colors.red);
+                    }
+
+                    bool? isFileExist = snapshot.data;
+                    if (isFileExist != null) {
+                      return snapshot.hasData
+                          ? cl.localPath.isNotEmpty
+                              ? _playButton(state, cl)
+                              : _isDownloading(state, cl)
+                                  ? CircularProgressIndicator()
+                                  : _isDownloaded(state, cl)
+                                      ? _playButton(state, cl)
+                                      : _downloadButton(cl, index)
+                          : CircularProgressIndicator();
+                    } else {
+                      return Icon(Icons.close, color: Colors.red);
+                    }
+                  },
+                )
+              : cl.localPath.isNotEmpty
+                  ? _playButton(state, cl)
+                  : _isDownloading(state, cl)
+                      ? CircularProgressIndicator()
+                      : _isDownloaded(state, cl)
+                          ? _playButton(state, cl)
+                          : _downloadButton(cl, index));
 
   List<Widget> _buildPositionedDotButtonList(StateSetter state) => [
         PositionedDotButton(
@@ -172,7 +211,7 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
         )
       ];
 
-  Widget _buildDialog(int? lineId) {
+  Widget _buildDialog(int? lineId, ChatWheelState state) {
     return StatefulBuilder(builder: (_, StateSetter dialogState) {
       return AlertDialog(
         title: Text(
@@ -209,14 +248,39 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
               borderRadius: BorderRadius.circular(50.0),
             ),
             onPressed: () {
+              Navigator.of(context).pop();
               if (lineId != null) {
                 _homeBloc.updateDotChatwheel(
-                  id: lineId,
-                  showInWheel: true,
-                  dotPosition: _currentActiveDot,
-                );
+                    id: lineId,
+                    showInWheel: true,
+                    wheelPosition: _currentActiveDot);
+
+                if (state.showInLineErrorMessage != null &&
+                    state.showInLineErrorMessage != '')
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Row(
+                        children: [
+                          Icon(
+                            Icons.warning,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 8.0),
+                          Text(
+                            state.showInLineErrorMessage!,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
               }
-              Navigator.of(context).pop();
+              setState(() {
+                _currentActiveDot = WheelPosition.none;
+              });
             },
             child: Text(
               'Confirm',
@@ -298,12 +362,14 @@ class _ChatWheelPageState extends State<ChatWheelPage> {
                 state.isUpdatingShowInLine != null &&
                         state.isUpdatingShowInLine!
                     ? Container(
-                        color: Colors.black87,
+                        color: Colors.black.withOpacity(0.4),
                         width: double.infinity,
                         height: double.infinity,
-                        child: CircularProgressIndicator(),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       )
-                    : Container()
+                    : Container(),
               ]);
             } else {
               return Center(

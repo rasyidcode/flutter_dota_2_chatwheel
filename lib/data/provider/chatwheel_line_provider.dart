@@ -70,6 +70,35 @@ class ChatwheelLineProvider extends BaseProvider {
     return await db?.rawQuery('SELECT COUNT(*) as total FROM $_tableName');
   }
 
+  /// Get single line
+  Future<ChatwheelLine?> getLine(int id) async {
+    final lines =
+        await db?.rawQuery('SELECT * FROM $_tableName WHERE id = $id');
+    if (lines != null) {
+      final lineList = lines
+          .map(
+            (line) => ChatwheelLine(
+              (b) => b
+                ..id = (line['id'] as int)
+                ..eventName = (line['eventName'] as String)
+                ..packName = (line['packName'] as String)
+                ..line = (line['line'] as String)
+                ..lineTranslate = (line['lineTranslate'] as String)
+                ..url = (line['url'] as String)
+                ..showInWheel = (line['showInWheel'] as int) == 1 ? true : false
+                ..localPath = (line['localPath'] as String)
+                ..wheelPos = (line['wheelPos'] as int).toWheelDotPosition()
+                ..createdAt = (line['createdAt'] as int)
+                ..updatedAt = (line['updatedAt'] as int),
+            ),
+          )
+          .toBuiltList();
+      return lineList[0];
+    } else {
+      return null;
+    }
+  }
+
   //--------------------- insert part ---------------------//
   /// Insert all chat wheel at once to database
   Future<List<Object?>?> insertBatch(List<ChatwheelLine> lines,
@@ -87,14 +116,17 @@ class ChatwheelLineProvider extends BaseProvider {
 
   //--------------------- update part ---------------------//
   /// Modify line's showInWheel
-  Future<bool> updateLineShowInWheel(
-      int id, bool showInWheel, WheelPosition dotPosition) async {
-    final updateRes = await db?.rawUpdate(
-        'UPDATE $_tableName SET showInWheel = ? WHERE id = ? AND wheelPos = ?',
-        [showInWheel ? 1 : 0, id, dotPosition.toWheelDotIndex()]);
-    if (updateRes != null)
-      return updateRes > 0;
-    else
+  Future<bool> updateLineShowInWheel({
+    required bool showInWheel,
+    required WheelPosition wheelPosition,
+    required int id,
+  }) async {
+    final int? _count = await db?.rawUpdate(
+        'UPDATE $_tableName SET showInWheel = ?, wheelPos = ? WHERE id = ?',
+        [showInWheel ? 1 : 0, wheelPosition.toWheelDotIndex(), id]);
+    if (_count != null) {
+      return _count > 0;
+    } else
       return false;
   }
 

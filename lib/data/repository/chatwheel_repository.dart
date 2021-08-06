@@ -79,12 +79,16 @@ class ChatwheelRepository {
   }
 
   // Update line show in wheel
-  Future<bool> updateShowInWheel(
-      int id, bool showInWheel, WheelPosition dotPosition) async {
+  Future<bool> updateShowInWheel({
+    required bool showInWheel,
+    required WheelPosition wheelPosition,
+    required int id,
+  }) async {
     final isUpdated = await (_provider as ChatwheelLineProvider)
-        .updateLineShowInWheel(id, showInWheel, dotPosition);
-    if (!isUpdated) throw new ShowInWheelUpdateException('Updated fail');
-    return isUpdated;
+        .updateLineShowInWheel(
+            showInWheel: showInWheel, wheelPosition: wheelPosition, id: id);
+    if (!isUpdated) throw ShowInWheelUpdateException('Update failed!');
+    return true;
   }
 }
 

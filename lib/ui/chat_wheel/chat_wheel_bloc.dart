@@ -27,7 +27,7 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
 
   int _showInWheelLineIndex = -1;
   bool _showInWheel = false;
-  WheelPosition _dotPosition = WheelPosition.none;
+  WheelPosition _wheelPosition = WheelPosition.none;
 
   void onHomeInit() {
     add(ChatWheelInitiated());
@@ -49,14 +49,27 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
     add(ChatWheelDownload());
   }
 
-  void updateDotChatwheel(
-      {required int id,
-      required bool showInWheel,
-      required WheelPosition dotPosition}) {
+  void updateDotChatwheel({
+    required bool showInWheel,
+    required WheelPosition wheelPosition,
+    required int id,
+  }) {
     _showInWheelLineIndex = id;
     _showInWheel = showInWheel;
-    _dotPosition = dotPosition;
+    _wheelPosition = wheelPosition;
     add(ChatWheelUpdateShowInWheel());
+  }
+
+  void updateLocalPath(int id, String localPath) async {
+    BuiltList<ChatwheelLine> newLines = BuiltList<ChatwheelLine>();
+    bool isUpdated = await _chatwheelRepository.setLocalPath(id, localPath);
+    if (isUpdated) {
+      ChatwheelLine cl = state.lines[_downloadingIndex]
+          .rebuild((b) => b..localPath = localPath);
+      var preNewLines = state.lines.toBuilder();
+      preNewLines[_downloadingIndex] = cl;
+      newLines = preNewLines.build();
+    }
   }
 
   @override
@@ -152,8 +165,12 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
     yield ChatWheelState.showInWheelUpdating(state.lines);
 
     try {
-      _chatwheelRepository.updateShowInWheel(
-          _showInWheelLineIndex, _showInWheel, _dotPosition);
+      await Future.delayed(Duration(seconds: 2));
+      await _chatwheelRepository.updateShowInWheel(
+        wheelPosition: _wheelPosition,
+        showInWheel: _showInWheel,
+        id: _showInWheelLineIndex,
+      );
       yield ChatWheelState.showInWheelUpdateDone(state.lines);
     } on ShowInWheelUpdateException catch (e) {
       yield ChatWheelState.showInWheelUpdateError(state.lines, e.message);
