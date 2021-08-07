@@ -2,9 +2,14 @@
         xmlns:tools="http://schemas.android.com/tools"
     package="com.example.flutter_dota_2_chatwheel">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+
    <application
-        android:label="flutter_dota_2_chatwheel"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Chat Wheel Dota"
+        android:icon="@mipmap/ic_app_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -40,9 +45,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 </manifest>

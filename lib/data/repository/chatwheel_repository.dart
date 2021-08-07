@@ -4,6 +4,8 @@ import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart
 import 'package:flutter_dota_2_chatwheel/data/provider/base_provider.dart';
 import 'package:flutter_dota_2_chatwheel/data/provider/chatwheel_line_provider.dart';
 import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
+import 'package:flutter_dota_2_chatwheel/exceptions/empty_result_exception.dart';
+import 'package:flutter_dota_2_chatwheel/exceptions/show_in_wheel_update_exception.dart';
 
 class ChatwheelRepository {
   final ChatwheelDataSource _chatwheelDataSource;
@@ -90,16 +92,4 @@ class ChatwheelRepository {
     if (!isUpdated) throw ShowInWheelUpdateException('Update failed!');
     return true;
   }
-}
-
-class ShowInWheelUpdateException implements Exception {
-  final String message;
-
-  ShowInWheelUpdateException(this.message);
-}
-
-class EmptyResultException implements Exception {
-  final String message;
-
-  EmptyResultException(this.message);
 }

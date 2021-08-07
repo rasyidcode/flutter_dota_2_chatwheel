@@ -7,10 +7,14 @@ import 'package:flutter_dota_2_chatwheel/data/model/local/chatwheel_line.dart';
 import 'package:flutter_dota_2_chatwheel/data/network/chatwheel_data_source.dart';
 import 'package:flutter_dota_2_chatwheel/data/repository/chatwheel_repository.dart';
 import 'package:flutter_dota_2_chatwheel/enums/wheel_position.dart';
+import 'package:flutter_dota_2_chatwheel/exceptions/empty_result_exception.dart';
+import 'package:flutter_dota_2_chatwheel/exceptions/show_in_wheel_update_exception.dart';
 import 'package:flutter_dota_2_chatwheel/extensions/element_extensions.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_event.dart';
 import 'package:flutter_dota_2_chatwheel/ui/chat_wheel/chat_wheel_state.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_dota_2_chatwheel/utils/download_util.dart';
+import 'package:flutter_dota_2_chatwheel/utils/permission_util.dart';
+import 'package:flutter_dota_2_chatwheel/utils/storage_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
@@ -75,40 +79,59 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
   @override
   Stream<ChatWheelState> mapEventToState(ChatWheelEvent event) async* {
     if (event is ChatWheelInitiated) {
-      yield* mapInitEvent();
+      yield* _mapInitEvent();
     } else if (event is ChatWheelNextPage) {
-      yield* mapNextPageEvent();
+      yield* _mapNextPageEvent();
     } else if (event is ChatWheelDownload) {
-      yield* mapDownloadEvent();
+      yield* _mapDownloadEvent();
     } else if (event is ChatWheelUpdateShowInWheel) {
-      yield* mapUpdateLineShowInWheel();
+      yield* _mapUpdateLineShowInWheel();
     }
   }
 
-  Stream<ChatWheelState> mapDownloadEvent() async* {
+  /// Handle initial event
+  Stream<ChatWheelState> _mapInitEvent() async* {
+    yield ChatWheelState.loading();
+    _chatwheelRepository.init();
+
+    try {
+      await _chatwheelRepository.storeChatwheels();
+
+      final lines = await _chatwheelRepository.getLines();
+      yield ChatWheelState.success(lines);
+    } on NoElementFoundException catch (e) {
+      yield ChatWheelState.failure(e.message);
+    } on UnhandledException catch (e) {
+      yield ChatWheelState.failure(e.message);
+    } on EmptyResultException catch (e) {
+      yield ChatWheelState.failure(e.message);
+    }
+  }
+
+  /// Handle pagination event
+  Stream<ChatWheelState> _mapNextPageEvent() async* {
+    try {
+      final lines = await _chatwheelRepository.getLines();
+      yield ChatWheelState.success(state.lines + lines);
+    } on EmptyResultException catch (_) {
+      yield state.rebuild((b) => b..hasReachedEndOfResults = true);
+    }
+  }
+
+  /// Handle download event
+  Stream<ChatWheelState> _mapDownloadEvent() async* {
     yield ChatWheelState.downloading(state.lines, _downloadingId);
     try {
       File? savedFile;
-      if (await Permission.storage.isGranted) {
-        savedFile = await _handleStoragePermissionGranted();
+
+      if (await requestPermission(Permission.storage)) {
+        savedFile = await getLineFileStorage(_fileName);
       } else {
-        PermissionStatus permissionStatus = await Permission.storage.request();
-        if (permissionStatus == PermissionStatus.granted) {
-          savedFile = await _handleStoragePermissionGranted();
-        } else {
-          yield ChatWheelState.downloadFail(state.lines, _downloadingId);
-        }
+        yield ChatWheelState.downloadFail(state.lines, _downloadingId);
       }
 
       if (savedFile != null) {
-        await _dio.download(
-          _downloadUrl,
-          savedFile.path,
-          onReceiveProgress: (val1, val2) {
-            double progress = val1 / val2;
-            print(progress);
-          },
-        );
+        downloadLine(_dio, _downloadUrl, savedFile.path);
         // update downloadedId chatwheel on database
         BuiltList<ChatwheelLine> newLines = BuiltList<ChatwheelLine>();
         if (_downloadingId != null) {
@@ -134,34 +157,8 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
     }
   }
 
-  Stream<ChatWheelState> mapInitEvent() async* {
-    yield ChatWheelState.loading();
-    _chatwheelRepository.init();
-
-    try {
-      await _chatwheelRepository.storeChatwheels();
-
-      final lines = await _chatwheelRepository.getLines();
-      yield ChatWheelState.success(lines);
-    } on NoElementFoundException catch (e) {
-      yield ChatWheelState.failure(e.message);
-    } on UnhandledException catch (e) {
-      yield ChatWheelState.failure(e.message);
-    } on EmptyResultException catch (e) {
-      yield ChatWheelState.failure(e.message);
-    }
-  }
-
-  Stream<ChatWheelState> mapNextPageEvent() async* {
-    try {
-      final lines = await _chatwheelRepository.getLines();
-      yield ChatWheelState.success(state.lines + lines);
-    } on EmptyResultException catch (_) {
-      yield state.rebuild((b) => b..hasReachedEndOfResults = true);
-    }
-  }
-
-  Stream<ChatWheelState> mapUpdateLineShowInWheel() async* {
+  /// Handle update showInLine event
+  Stream<ChatWheelState> _mapUpdateLineShowInWheel() async* {
     yield ChatWheelState.showInWheelUpdating(state.lines);
 
     try {
@@ -177,30 +174,6 @@ class ChatWheelBloc extends Bloc<ChatWheelEvent, ChatWheelState> {
     } catch (_) {
       yield ChatWheelState.showInWheelUpdateError(
           state.lines, 'Something wrong occured');
-    }
-  }
-
-  Future<File?> _handleStoragePermissionGranted() async {
-    Directory? dir = await getExternalStorageDirectory();
-    String newPath = "";
-
-    List<String>? paths = dir?.path.split("/");
-    if (paths != null) {
-      for (int i = 1; i < paths.length; i++) {
-        if (paths[i] != "Android")
-          newPath += "/" + paths[i];
-        else
-          break;
-      }
-
-      newPath = newPath + "/FlutterDota2Chatwheel";
-      dir = Directory(newPath);
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
-      }
-      String savedPath = dir.path + "/$_fileName.mp3";
-      File saveFile = File(savedPath);
-      return saveFile;
     }
   }
 }
