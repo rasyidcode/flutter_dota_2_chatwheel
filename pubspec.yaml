@@ -58,6 +58,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/absolutely_perfect.mp3
+    - assets/ceeeb_start.mp3
+    - assets/easiest_money.mp3
+    - assets/eto_prosto_netchto.mp3
+    - assets/ehto_g_g.mp3
+    - assets/ni_qi_bu_qi.mp3
+    - assets/ta_daaaa.mp3
+    - assets/youre_a_hero.mp3
 
   # To add assets to your application, add an assets section, like this:
   # assets:
